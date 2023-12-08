@@ -1,0 +1,11 @@
+### Input:
+How does Wikipedia define Urcuchillay?
+### Response:
+Urcuchillay was a god worshiped by Incan herders, believed to be a multicolored male llama who watched over animals. It was said to be the incarnation of the constellation Lyra, as Urcuchillay was the name given to both the constellation and the deity.
+
+---
+
+### Input:
+How does Symbolikon define Urcuchillay?
+### Response:
+Urcuchillay, in the Inca religion, was the god who watched over animals. He was said to appear as a multi-colored llama, and to care for and protect the animals of Incan herders. Urcuchillay would ensure the well-being and increasing size of their herds. He is associated with the stellar constellation Lyra.
