@@ -68,7 +68,7 @@ class Query:
             if os.path.exists(path):
                 model_url = "file://" + path
 
-        os.environ["LLAMA_INDEX_CACHE_DIR"] = os.path.join(model_path)
+        os.environ["LLAMA_INDEX_CACHE_DIR"] = model_path
 
         if pretrained_model_name is not None:
             llama_index.set_global_tokenizer(
