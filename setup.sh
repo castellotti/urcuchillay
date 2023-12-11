@@ -136,7 +136,8 @@ else
     pyenv activate urcuchillay-env
 fi
 
-pip install llama_cpp_python llama_index transformers torch
+pip install llama_cpp_python llama_index transformers torch \
+  pypdf Pillow
 
 printf "Verifying llama_cpp_python version: "
 python -c "import llama_cpp; print(llama_cpp.__version__)"
