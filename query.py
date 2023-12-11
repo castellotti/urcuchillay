@@ -30,7 +30,7 @@ MODEL_URL_TEMPLATE = "https://huggingface.co/TheBloke/Llama-2-{MODEL_SIZE}B-chat
 EMBED_MODEL_NAME = "local"
 
 DATA_PATH = os.path.join(os.getcwd(), "data")
-MODEL_PATH = os.getcwd()
+MODEL_PATH = os.path.join(os.getcwd(), "models")
 STORAGE_PATH = os.path.join(os.getcwd(), "storage")
 
 DEFAULT_PROMPT = "What is Urcuchillay?"
@@ -63,12 +63,18 @@ class Query:
         llama_debug = llama_index.callbacks.LlamaDebugHandler(print_trace_on_end=debug)
         self.callback_manager = llama_index.callbacks.CallbackManager([llama_debug])
 
-        if model_path is not None:
+        # llama_index will automatically assume models are cached in a subdirectory of the current path named
+        # "models" so we need to handle if a user explicitly included "models" at the end of --model_path
+        cache_directory = model_path
+        if os.path.basename(model_path) == "models":
             path = os.path.join(model_path, model_name)
-            if os.path.exists(path):
-                model_url = "file://" + path
+            cache_directory = os.path.dirname(model_path)
+        else:
+            path = os.path.join(model_path, "models", model_name)
+        if os.path.exists(path):
+            model_url = "file://" + path
 
-        os.environ["LLAMA_INDEX_CACHE_DIR"] = model_path
+        os.environ["LLAMA_INDEX_CACHE_DIR"] = cache_directory
 
         if pretrained_model_name is not None:
             llama_index.set_global_tokenizer(
@@ -158,7 +164,7 @@ def parse_arguments():
     parser.add_argument('--data_path', type=str, default=DATA_PATH,
                         help='The path to data files to be indexed (default: %(default)s)')
     parser.add_argument('--model_path', type=str, default=MODEL_PATH,
-                        help='The path to store the "models" directory (default: %(default)s)')
+                        help='The path to the directory for cached models (default: %(default)s)')
     parser.add_argument('--storage_path', type=str, default=STORAGE_PATH,
                         help='The path to save and load the vector store (default: %(default)s)')
     parser.add_argument('--model_size', '--size', choices=LLM_MODELS.keys(), default=MODEL_SIZE_DEFAULT,
