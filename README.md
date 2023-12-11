@@ -1,4 +1,4 @@
-# Urcuchillay
+# [Urcuchillay](http://urcuchillay.ai)
 
 "Ur-koo-CHEE-lye"
 
@@ -112,7 +112,8 @@ options:
   --data_path DATA_PATH
                         The path to data files to be indexed (default: ./data)
   --model_path MODEL_PATH
-                        The path to store the "models" directory (default: .)
+                        The path to the directory for cached models (default:
+                        ./models)
   --storage_path STORAGE_PATH
                         The path to save and load the vector store (default: 
                         ./storage)
@@ -159,4 +160,17 @@ Response: Based on the information provided in the context, Urcuchillay is not a
 - Vector store will be loaded from the default local storage location instead of generated from data path.
 ```
 % ./query.py --load
+```
+
+### Use the Mistral 7B model from a download URL
+- Model will be downloaded if not already cached locally
+```
+% ./query.py --model_url https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF/resolve/main/mistral-7b-v0.1.Q4_K_M.gguf
+```
+
+### Use the Mistral 7B model from local cache with debug output enabled
+- default path of "./models" will be used
+- a custom path to cached modules can optionally be specified with the ```--model_path``` argument
+```
+% ./query.py --model_name mistral-7b-v0.1.Q4_K_M.gguf --debug
 ```
