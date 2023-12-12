@@ -20,7 +20,6 @@ case "$OS" in
         PYENV_INIT="eval \"\$(pyenv init --path)\""
         PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
 
-
         for line in "$PYENV_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
             if ! grep -Fxq "$line" "$ZSHRC"; then
                 printf "Add '%s' to %s? (y/N) " "$line" "$ZSHRC"
@@ -40,23 +39,89 @@ case "$OS" in
 
     Linux)
         PYENV_VERSION=3.11.3
-        echo "Running on Linux. Installing using APT..."
-        # Update packages and install prerequisites
-        sudo apt update
-        sudo apt install -y make build-essential libssl-dev zlib1g-dev \
-                            libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
-                            libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
-                            libffi-dev liblzma-dev
-        echo
+        echo "Running on Linux."
+
+        # Extract the ID value from /etc/os-release
+        ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+
+        # Check the ID and execute different commands based on the OS
+        if [ "$ID" = "ubuntu" ] || [ "$ID" = "debian" ]; then
+            echo "Ubuntu (or Debian) detected."
+            # List of prerequisite packages
+            packages="make build-essential libssl-dev zlib1g-dev libbz2-dev \
+                      libreadline-dev libsqlite3-dev wget curl llvm \
+                      libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+                      libffi-dev liblzma-dev"
+
+            # Collect missing prerequisites
+            install_required=false
+            is_installed() {
+                dpkg -l "$1" > /dev/null 2>&1
+                return $?
+            }
+            for pkg in $packages; do
+                if ! is_installed "$pkg"; then
+                    install_required=true
+                    echo "$pkg is not installed."
+                fi
+            done
+
+            # Install missing packages
+            if [ "$install_required" = true ]; then
+                echo "Installing missing dependencies using APT."
+                sudo apt update
+                # shellcheck disable=SC2086
+                sudo apt-get install -y $packages
+            else
+                echo "All required packages are already installed."
+            fi
+
+        elif [ "$ID" = "fedora" ]; then
+            echo "Fedora detected."
+            # List of prerequisite packages
+            packages="zlib-devel bzip2 bzip2-devel readline-devel \
+                      sqlite sqlite-devel openssl-devel xz xz-devel \
+                      libffi-devel findutils gcc-c++"
+
+            # Collect missing prerequisites
+            to_install=""
+            is_installed() {
+                dnf list installed "$1" > /dev/null 2>&1
+                return $?
+            }
+            for pkg in $packages; do
+                if ! is_installed "$pkg"; then
+                    to_install="$to_install $pkg"
+                fi
+            done
+            to_install=$(echo "$to_install" | sed 's/^ //')
+
+            # Install missing packages
+            if [ -n "$to_install" ]; then
+                echo "The following packages are missing and will be installed via dnf: $to_install"
+                # shellcheck disable=SC2086
+                sudo dnf install $to_install
+            else
+                echo "All dependencies are already installed."
+            fi
+        else
+            echo "Warning: Unknown distribution detected. Dependencies may be missing."
+        fi
+
         echo "Checking for pyenv..."
         # Check if pyenv is already installed
         if command -v pyenv >/dev/null 2>&1; then
             echo "pyenv is already installed."
         else
             echo "Installing pyenv..."
-            curl https://pyenv.run | bash
+            curl https://pyenv.run 2> /dev/null | bash 2> /dev/null
+            export PYENV_ROOT="$HOME/.pyenv"
+            if [ -d "$PYENV_ROOT/bin" ]; then
+                export PATH="$PYENV_ROOT/bin:$PATH"
+                eval "$(pyenv init -)"
+            fi
         fi
-        echo
+
         echo "Checking for pyenv-virtualenv..."
         # Check if pyenv-virtualenv is installed
         if ! command -v pyenv-virtualenv >/dev/null 2>&1; then
@@ -71,7 +136,7 @@ case "$OS" in
         else
             echo "pyenv-virtualenv is already installed."
         fi
-        echo
+
         echo "Checking if auto-activation of virtualenvs is enabled..."
         # Check and update .bashrc for pyenv and pyenv-virtualenv initialization
         BASHRC="$HOME/.bashrc"
