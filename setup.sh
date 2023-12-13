@@ -73,7 +73,7 @@ case "$OS" in
                 # shellcheck disable=SC2086
                 sudo apt-get install -y $packages
             else
-                echo "All required packages are already installed."
+                echo "All dependencies are already installed."
             fi
 
         elif [ "$ID" = "fedora" ]; then
@@ -100,7 +100,7 @@ case "$OS" in
             if [ -n "$to_install" ]; then
                 echo "The following packages are missing and will be installed via dnf: $to_install"
                 # shellcheck disable=SC2086
-                sudo dnf install $to_install
+                sudo dnf --assumeyes install $to_install
             else
                 echo "All dependencies are already installed."
             fi
@@ -149,7 +149,6 @@ case "$OS" in
             if ! grep -Fxq "$line" "$BASHRC"; then
                 printf "Add '%s' to %s? (y/N) " "$line" "$BASHRC"
                 read -r REPLY
-                echo  # Move to a new line
                 if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
                     echo "Adding '$line' to $BASHRC"
                     echo "$line" >> "$BASHRC"
