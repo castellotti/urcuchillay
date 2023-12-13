@@ -39,6 +39,11 @@ This script is suitable for both macOS and Linux (tested with Ubuntu 22.04 LTS a
 sh setup.sh
 ```
 
+Alternatively, Urcuchillay can be installed directly via curl:
+```
+curl -L setup.urcuchillay.ai | sh
+```
+
 ## Manual Installation
 *Note*: Automated installation via ```setup.sh``` is recommended.
 
