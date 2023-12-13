@@ -184,3 +184,7 @@ python -c "import llama_cpp; print(llama_cpp.__version__)"
 
 printf "Verifying llama_index version: "
 python -c "import llama_index; print(llama_index.__version__)"
+
+echo # newline
+echo "To use Urcuchillay, please start a new terminal and run:"
+echo "pyenv activate urcuchillay-env"
