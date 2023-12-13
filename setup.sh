@@ -157,6 +157,10 @@ PYENV_COMMENT_ADDED=false
 
 echo # newline
 echo "Checking if auto-activation of virtualenvs is enabled..."
+if [ ! -f "$SHELL_RC" ]; then
+    echo "Creating $SHELL_RC since it does not exist."
+    touch "$SHELL_RC"
+fi
 for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
     if ! grep -Fxq "$line" "$SHELL_RC"; then
         printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
