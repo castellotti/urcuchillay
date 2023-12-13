@@ -17,10 +17,11 @@ case "$OS" in
         ZSHRC="$HOME/.zshrc"
         # shellcheck disable=SC2016
         PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
-        PYENV_INIT="eval \"\$(pyenv init --path)\""
+        PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
+        PYENV_INIT="eval \"\$(pyenv init -)\""
         PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
 
-        for line in "$PYENV_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
+        for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
             if ! grep -Fxq "$line" "$ZSHRC"; then
                 printf "Add '%s' to %s? (y/N) " "$line" "$ZSHRC"
                 read -r REPLY
@@ -142,10 +143,11 @@ case "$OS" in
         BASHRC="$HOME/.bashrc"
         # shellcheck disable=SC2016
         PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
-        PYENV_INIT="eval \"\$(pyenv init --path)\""
+        PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
+        PYENV_INIT="eval \"\$(pyenv init -)\""
         PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
 
-        for line in "$PYENV_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
+        for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
             if ! grep -Fxq "$line" "$BASHRC"; then
                 printf "Add '%s' to %s? (y/N) " "$line" "$BASHRC"
                 read -r REPLY
