@@ -8,12 +8,14 @@ OS="$(uname -s)"
 
 case "$OS" in
     Darwin)
+        SHELL_RC="$HOME/.zshrc"
         PYENV_VERSION=3.11.6
         echo "Running on macOS. Installing using Homebrew..."
         brew install pyenv pyenv-virtualenv
         ;;
 
     Linux)
+        SHELL_RC="$HOME/.bashrc"
         PYENV_VERSION=3.11.3
         echo "Running on Linux."
 
@@ -117,13 +119,6 @@ case "$OS" in
         ;;
 esac
 
-# Activate virtual PyEnv for current shell script
-if [ -n "$ZSH_VERSION" ]; then
-    SHELL_RC="$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
-    SHELL_RC="$HOME/.bashrc"
-fi
-
 # shellcheck disable=SC2016
 PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
 PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
@@ -153,8 +148,10 @@ for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_IN
     fi
 done
 
+# Activate virtual PyEnv for current shell script
 # shellcheck disable=SC1090
-[ -f "$SHELL_RC" ] && . "$SHELL_RC"
+# shellcheck disable=SC2086
+[ -f $SHELL_RC ] && . $SHELL_RC
 
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
