@@ -34,7 +34,7 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 ## Installation
 
 Creates a virtual Python environment ([pyenv](https://github.com/pyenv/pyenv)) with all dependency modules prepared for use.
-This script is suitable for both macOS and Linux.
+This script is suitable for both macOS and Linux (tested with Ubuntu 22.04 LTS and Fedora 39).
 ```
 sh setup.sh
 ```
