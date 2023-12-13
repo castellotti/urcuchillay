@@ -164,17 +164,19 @@ fi
 for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
     if ! grep -Fxq "$line" "$SHELL_RC"; then
         printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
-        read -r REPLY
-        if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
-            # Add a comment block for first new entry during this session
-            if [ "$PYENV_COMMENT_ADDED" = false ]; then
-                printf "\n%s\n" "$PYENV_COMMENT" >> "$SHELL_RC"
-                PYENV_COMMENT_ADDED=true
-            fi
-            echo "Adding '$line' to $SHELL_RC"
-            echo "$line" >> "$SHELL_RC"
-        else
-            echo "Skipping '$line'"
+        # Read input directly from the terminal in case piped from curl
+        if read -r REPLY </dev/tty; then
+          if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
+              # Add a comment block for first new entry during this session
+              if [ "$PYENV_COMMENT_ADDED" = false ]; then
+                  printf "\n%s\n" "$PYENV_COMMENT" >> "$SHELL_RC"
+                  PYENV_COMMENT_ADDED=true
+              fi
+              echo "Adding '$line' to $SHELL_RC"
+              echo "$line" >> "$SHELL_RC"
+          else
+              echo "Skipping '$line'"
+          fi
         fi
     else
         echo "'$line' already exists in $SHELL_RC"
