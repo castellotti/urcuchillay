@@ -11,31 +11,6 @@ case "$OS" in
         PYENV_VERSION=3.11.6
         echo "Running on macOS. Installing using Homebrew..."
         brew install pyenv pyenv-virtualenv
-        echo
-        echo "Checking if auto-activation of virtualenvs is enabled..."
-        # Check and update .zshrc for pyenv and pyenv-virtualenv initialization
-        ZSHRC="$HOME/.zshrc"
-        # shellcheck disable=SC2016
-        PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
-        PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
-        PYENV_INIT="eval \"\$(pyenv init -)\""
-        PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
-
-        for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
-            if ! grep -Fxq "$line" "$ZSHRC"; then
-                printf "Add '%s' to %s? (y/N) " "$line" "$ZSHRC"
-                read -r REPLY
-                echo  # Move to a new line
-                if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
-                    echo "Adding '$line' to $ZSHRC"
-                    echo "$line" >> "$ZSHRC"
-                else
-                    echo "Skipping '$line'"
-                fi
-            else
-                echo "'$line' already exists in $ZSHRC"
-            fi
-        done
         ;;
 
     Linux)
@@ -110,7 +85,6 @@ case "$OS" in
         fi
 
         echo "Checking for pyenv..."
-        # Check if pyenv is already installed
         if command -v pyenv >/dev/null 2>&1; then
             echo "pyenv is already installed."
         else
@@ -124,43 +98,17 @@ case "$OS" in
         fi
 
         echo "Checking for pyenv-virtualenv..."
-        # Check if pyenv-virtualenv is installed
         if ! command -v pyenv-virtualenv >/dev/null 2>&1; then
 	            PYENV_VIRTUALENV_DIR="$(pyenv root)/plugins/pyenv-virtualenv"
             if [ -d "$PYENV_VIRTUALENV_DIR" ]; then
                 echo "pyenv-virtualenv directory already exists."
             else
                 echo "Installing pyenv-virtualenv..."
-                # Install pyenv-virtualenv
                 git clone https://github.com/pyenv/pyenv-virtualenv.git "$PYENV_VIRTUALENV_DIR"
             fi
         else
             echo "pyenv-virtualenv is already installed."
         fi
-
-        echo "Checking if auto-activation of virtualenvs is enabled..."
-        # Check and update .bashrc for pyenv and pyenv-virtualenv initialization
-        BASHRC="$HOME/.bashrc"
-        # shellcheck disable=SC2016
-        PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
-        PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
-        PYENV_INIT="eval \"\$(pyenv init -)\""
-        PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
-
-        for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
-            if ! grep -Fxq "$line" "$BASHRC"; then
-                printf "Add '%s' to %s? (y/N) " "$line" "$BASHRC"
-                read -r REPLY
-                if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
-                    echo "Adding '$line' to $BASHRC"
-                    echo "$line" >> "$BASHRC"
-                else
-                    echo "Skipping '$line'"
-                fi
-            else
-                echo "'$line' already exists in $BASHRC"
-            fi
-        done
         ;;
 
     *)
@@ -171,15 +119,44 @@ esac
 
 # Activate virtual PyEnv for current shell script
 if [ -n "$ZSH_VERSION" ]; then
-    # For Zsh
-    # shellcheck disable=SC1090
-    [ -f ~/.zshrc ] && . ~/.zshrc
+    SHELL_RC="$HOME/.zshrc"
 elif [ -n "$BASH_VERSION" ]; then
-    # For Bash
-    # shellcheck disable=SC1090
-    [ -f ~/.bashrc ] && . ~/.bashrc
+    SHELL_RC="$HOME/.bashrc"
 fi
 
+# shellcheck disable=SC2016
+PYENV_PATH='export PATH="$HOME/.pyenv/bin:$PATH"'
+PYENV_INIT_PATH="eval \"\$(pyenv init --path)\""
+PYENV_INIT="eval \"\$(pyenv init -)\""
+PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
+PYENV_COMMENT="# pyenv and virtualenv initialization"
+PYENV_COMMENT_ADDED=false
+
+echo "Checking if auto-activation of virtualenvs is enabled..."
+for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
+    if ! grep -Fxq "$line" "$SHELL_RC"; then
+        printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
+        read -r REPLY
+        if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
+            # Add a comment block for first new entry during this session
+            if [ "$PYENV_COMMENT_ADDED" = false ]; then
+                printf "\n%s\n" "$PYENV_COMMENT" >> "$SHELL_RC"
+                PYENV_COMMENT_ADDED=true
+            fi
+            echo "Adding '$line' to $SHELL_RC"
+            echo "$line" >> "$SHELL_RC"
+        else
+            echo "Skipping '$line'"
+        fi
+    else
+        echo "'$line' already exists in $SHELL_RC"
+    fi
+done
+
+# shellcheck disable=SC1090
+[ -f "$SHELL_RC" ] && . "$SHELL_RC"
+
+eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
