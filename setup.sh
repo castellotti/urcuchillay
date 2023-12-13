@@ -127,6 +127,7 @@ PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
 PYENV_COMMENT="# pyenv and virtualenv initialization"
 PYENV_COMMENT_ADDED=false
 
+echo # newline
 echo "Checking if auto-activation of virtualenvs is enabled..."
 for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
     if ! grep -Fxq "$line" "$SHELL_RC"; then
