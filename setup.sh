@@ -3,6 +3,34 @@
 # Exit on any error
 set -e
 
+echo "Preparing to install Urcuchillay."
+
+# Function to check if inside a git repository by looking for .git directory
+is_in_git_repo() {
+    dir=$(pwd)
+    while [ "$dir" != "/" ]; do
+        if [ -d "$dir/.git" ]; then
+            return 0
+        fi
+        dir=$(dirname "$dir")
+    done
+    return 1
+}
+
+# Download Urcuchillay software if not already inside a git repo
+if ! is_in_git_repo; then
+    # Check if git is installed
+    if ! command -v git > /dev/null 2>&1; then
+        echo "ERROR: It appears git is not installed. Please install git to proceed."
+        exit 1
+    fi
+
+    echo "Cloning Urcuchillay git repository..."
+    git clone http://git.urcuchillay.ai urcuchillay || \
+      { echo "Failed to clone Urcuchillay repository"; exit 1; }
+    cd urcuchillay || { echo "Failed to enter directory"; exit 1; }
+fi
+
 # Detect the operating system
 OS="$(uname -s)"
 
