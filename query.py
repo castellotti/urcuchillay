@@ -9,6 +9,7 @@ import os
 import sys
 
 import config
+import utils
 
 try:
     import llama_index
@@ -132,58 +133,17 @@ class Query:
         print('Response: %s\n' % str(response).strip())
 
 
-def str2bool(arg):
-    if isinstance(arg, bool):
-        return arg
-    if arg.lower() in ('yes', 'true', 'on', 't', 'y', '1'):
-        return True
-    elif arg.lower() in ('no', 'false', 'off', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
-
-
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
-    parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=config.Config.DEBUG,
-                        help='Enable debug mode (default: %(default)s)')
+
     parser.add_argument('-p', '--prompt', type=str, default=DEFAULT_PROMPT,
                         help='The prompt to process (default: %(default)s)')
-    parser.add_argument('--cpu', action='store_const', const=0, default=config.Config.ENABLE_GPU,
-                        help='Use the CPU only instead of GPU acceleration')
-    parser.add_argument('--temperature', type=float, default=config.Config.TEMPERATURE,
-                        help='The temperature value for the model (default: %(default)s)')
-    parser.add_argument('--max_new_tokens', type=float, default=config.Config.MAX_NEW_TOKENS,
-                        help='The max new tokens value for the model (default: %(default)s)')
-    parser.add_argument('--context', '--context_window', type=float, default=config.Config.CONTEXT_WINDOW,
-                        help='The context window value for the model (default: %(default)s)')
-    parser.add_argument('--save', type=str2bool, nargs='?', const=True, default=False,
-                        help='Save indexed vector store locally (default: %(default)s)')
-    parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
-                        help='Load indexed vector store (default: %(default)s)')
-    parser.add_argument('--data', '--data_path', type=str, default=config.Config.DATA_PATH,
-                        help='The path to data files to be indexed (default: %(default)s)')
-    parser.add_argument('--path', '--model_path', type=str, default=config.Config.MODEL_PATH,
-                        help='The path to the directory for cached models (default: %(default)s)')
-    parser.add_argument('--storage', '--storage_path', type=str, default=config.Config.STORAGE_PATH,
-                        help='The path to save and load the vector store (default: %(default)s)')
-    parser.add_argument('--model_url', type=str, default=config.Config.MODEL_URL_DEFAULT,
-                        help='Custom URL for model (defaults to the Llama-2-7b model)')
-    parser.add_argument('--model', '--model_name', type=str, default=config.Config.MODEL_DEFAULT,
-                        help='The name of the model to use (default: extracted from model url)')
-    parser.add_argument('--embed_model_name', type=str, default=config.Config.EMBED_MODEL_NAME,
-                        help='The name of the embedding model to use (default: %(default)s)')
-    parser.add_argument('--embed_model_provider', type=str, default=None,
-                        help='The provider of the embedding model to use (default: %(default)s)')
-    parser.add_argument('--pretrained_model_name', type=str, default=None,
-                        help='The name of the pretrained model to use (default: %(default)s)')
-    parser.add_argument('--pretrained_model_provider', type=str, default=None,
-                        help='The provider of the pretrained model to use (default: %(default)s)')
+
+    parser = utils.parse_arguments_common(parser)
 
     args = parser.parse_args()
 
-    if str.lower(args.model) in config.Models.MODEL_ALIASES.keys():
-        args.model = config.Models.MODEL_ALIASES[args.model]
+    args = utils.update_arguments_common(args)
 
     return args
 
