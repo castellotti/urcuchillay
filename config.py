@@ -4,6 +4,7 @@
 # See LICENSE file in the project root for full license information.
 
 import json
+import logging
 import os
 import sys
 
@@ -84,9 +85,12 @@ class Models:
 class Config:
     DEBUG = False
 
+    LOG_LEVELS = ['CRITICAL', 'FATAL', 'ERROR', 'WARNING', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
+    LOG_LEVEL = logging.DEBUG if DEBUG else logging.ERROR
+
     CONFIG_FILE = 'config.json'
 
-    ENABLE_GPU = 1
+    ENABLE_GPUS = 1  # One or more GPU layers will enable hardware acceleration (1 is correct for Apple Silicon)
     TEMPERATURE = 0.1
     MAX_NEW_TOKENS = 256
     CONTEXT_WINDOW = 4096
@@ -112,7 +116,12 @@ class APIConfig:
     def get_openai_api_host():
         return f'http://{APIConfig.API_HOST}:{APIConfig.API_PORT}'
 
+    @staticmethod
+    def get_openai_api_base():
+        return f'http://{APIConfig.API_HOST}:{APIConfig.API_PORT}/v{APIConfig.OPENAI_API_VERSION}'
+
     OPENAI_API_KEY = 'xxxxxxxx'
+    OPENAI_API_VERSION = '1'
 
 
 def load_config():
