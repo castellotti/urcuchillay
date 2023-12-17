@@ -17,92 +17,153 @@ DEBUG = False
 
 ENABLE_GPU = 1
 TEMPERATURE = 0.1
+MAX_NEW_TOKENS = 256
+CONTEXT_WINDOW = 3900  # Llama 2 has a context window of 4096 tokens, set below for safety
 
-LLM_MODELS = {
-    'small': 7,
-    'medium': 13,
-    'large': 70
+MODELS = {
+    'llama-2-7b-chat.Q4_K_M.gguf': {  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        'model': 'https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF',
+        'url': 'https://huggingface.co/TheBloke/Llama-2-7B-chat-GGUF/' +
+               'resolve/main/llama-2-7b-chat.Q4_K_M.gguf',
+        'prompt_template': '{prompt}',
+        'model_creator': 'Meta',
+        'model_provider': 'TheBloke',
+    },
+    'llama-2-13b-chat.Q4_K_M.gguf': {  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        'model': 'https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF',
+        'url': 'https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/' +
+               'resolve/main/llama-2-13b-chat.Q4_K_M.gguf',
+        'prompt_template': '{prompt}',
+        'model_creator': 'Meta',
+        'model_provider': 'TheBloke',
+    },
+    'llama-2-70b-chat.Q4_K_M.gguf': {  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        'model': 'https://huggingface.co/TheBloke/Llama-2-70B-Chat-GGUF',
+        'url': 'https://huggingface.co/TheBloke/Llama-2-70B-chat-GGUF/' +
+               'resolve/main/llama-2-70b-chat.Q4_K_M.gguf',
+        'prompt_template': '{prompt}',
+        'model_creator': 'Meta',
+        'model_provider': 'TheBloke',
+    },
+    'mistral-7b-v0.1.Q4_K_M.gguf': {  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        'model': 'https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF',
+        'url': 'https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF/resolve/main/mistral-7b-v0.1.Q4_K_M.gguf',
+        'prompt_template': '[INST] {prompt} [/INST]',
+        'model_creator': 'Mistral AI',
+        'model_provider': 'TheBloke',
+    },
+    'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf': {  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        'model': 'https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF',
+        'url': 'https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/' +
+               'resolve/main/mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+        'prompt_template': '[INST] {prompt} [/INST]',
+        'model_creator': 'Mistral AI',
+        'model_provider': 'TheBloke',
+    },
 }
-MODEL_SIZE_DEFAULT = 'small'
-MODEL_URL_TEMPLATE = "https://huggingface.co/TheBloke/Llama-2-{MODEL_SIZE}B-chat-GGUF/" + \
-                     "resolve/main/llama-2-{MODEL_SIZE}b-chat.Q4_K_M.gguf"
 
-EMBED_MODEL_NAME = "local"
+MODEL_ALIASES = {
+    '7': 'llama-2-7b-chat.Q4_K_M.gguf',
+    '7b': 'llama-2-7b-chat.Q4_K_M.gguf',
+    'llama-2-7b': 'llama-2-7b-chat.Q4_K_M.gguf',
+    '13': 'llama-2-13b-chat.Q4_K_M.gguf',
+    '13b': 'llama-2-13b-chat.Q4_K_M.gguf',
+    'llama-2-13b': 'llama-2-13b-chat.Q4_K_M.gguf',
+    '70': 'llama-2-70b-chat.Q4_K_M.gguf',
+    '70b': 'llama-2-70b-chat.Q4_K_M.gguf',
+    'llama-2-70b': 'llama-2-70b-chat.Q4_K_M.gguf',
+    'small': 'llama-2-7b-chat.Q4_K_M.gguf',
+    'medium': 'llama-2-13b-chat.Q4_K_M.gguf',
+    'large': 'llama-2-70b-chat.Q4_K_M.gguf',
+    'mistral': 'mistral-7b-v0.1.Q4_K_M.gguf',
+    'mistral-7b': 'mistral-7b-v0.1.Q4_K_M.gguf',
+    'mixtral': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+    'mixtral-instruct': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+    'mixtral-8x7b': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+    'mixtral-8x7b-instruct': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+}
 
-DATA_PATH = os.path.join(os.getcwd(), "data")
-MODEL_PATH = os.path.join(os.getcwd(), "models")
-STORAGE_PATH = os.path.join(os.getcwd(), "storage")
+MODEL_URL_DEFAULT = MODELS[MODEL_ALIASES['7']]['url']
 
-DEFAULT_PROMPT = "What is Urcuchillay?"
+EMBED_MODEL_NAME = 'local'
+
+DATA_PATH = os.path.join(os.getcwd(), 'data')
+MODEL_PATH = os.path.join(os.getcwd(), 'models')
+STORAGE_PATH = os.path.join(os.getcwd(), 'storage')
+
+DEFAULT_PROMPT = 'What is Urcuchillay?'
 
 
 class Query:
-    def __init__(self, args,
-                 data_path=DATA_PATH,
-                 model_path=MODEL_PATH,
-                 storage_path=STORAGE_PATH):
+    def __init__(self, args):
 
-        debug = args.debug
+        self.debug = args.debug
+
+        data_path = args.data
+        model_path = args.path
+        storage_path = args.storage
 
         load = args.load
         save = args.save
         enable_gpu = args.cpu
         temperature = args.temperature
+        max_new_tokens = args.max_new_tokens
+        context_window = args.context
 
+        self.model_name = args.model
         model_url = args.model_url
-        model_name = args.model_name
         embed_model_name = args.embed_model_name
         embed_model_provider = args.embed_model_provider
         pretrained_model_name = args.pretrained_model_name
         pretrained_model_provider = args.pretrained_model_provider
 
-        level = logging.DEBUG if debug else logging.INFO
+        level = logging.DEBUG if self.debug else logging.INFO
         logging.basicConfig(stream=sys.stdout, level=level)
         logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-        llama_debug = llama_index.callbacks.LlamaDebugHandler(print_trace_on_end=debug)
+        llama_debug = llama_index.callbacks.LlamaDebugHandler(print_trace_on_end=self.debug)
         self.callback_manager = llama_index.callbacks.CallbackManager([llama_debug])
 
         # llama_index will automatically assume models are cached in a subdirectory of the current path named
         # "models" so we need to handle if a user explicitly included "models" at the end of --model_path
         cache_directory = model_path
-        if os.path.basename(model_path) == "models":
-            path = os.path.join(model_path, model_name)
+        if os.path.basename(model_path) == 'models':
+            path = os.path.join(model_path, self.model_name)
             cache_directory = os.path.dirname(model_path)
         else:
-            path = os.path.join(model_path, "models", model_name)
+            path = os.path.join(model_path, 'models', self.model_name)
         if os.path.exists(path):
-            model_url = "file://" + path
+            model_url = 'file://' + str(path)
 
-        os.environ["LLAMA_INDEX_CACHE_DIR"] = cache_directory
+        os.environ['LLAMA_INDEX_CACHE_DIR'] = cache_directory
 
         if pretrained_model_name is not None:
             llama_index.set_global_tokenizer(
                 transformers.AutoTokenizer.from_pretrained(
-                    pretrained_model_provider + "/" + pretrained_model_name
+                    pretrained_model_provider + '/' + pretrained_model_name
                 ).encode
             )
 
         self.llm = llama_index.llms.LlamaCPP(
             model_url=model_url,
-            model_path=None,  # Setting a custom model path causes a fault
+            model_path=None,  # Note: setting a custom model_path here causes a fault
             temperature=temperature,
-            max_new_tokens=256,
-            context_window=3900,  # Llama 2 has a context window of 4096 tokens, set below for safety
+            max_new_tokens=max_new_tokens,
+            context_window=context_window,
             generate_kwargs={},  # kwargs to pass to __call__()
-            model_kwargs={"n_gpu_layers": enable_gpu},  # kwargs to pass to __init__()
+            model_kwargs={'n_gpu_layers': enable_gpu},  # kwargs to pass to __init__()
             # transform inputs into Llama 2 format
             messages_to_prompt=llama_index.llms.llama_utils.messages_to_prompt,
             completion_to_prompt=llama_index.llms.llama_utils.completion_to_prompt,
-            verbose=debug,
+            verbose=self.debug,
         )
 
-        if args.embed_model_name == "local":
+        if args.embed_model_name == 'local':
             embed_model = args.embed_model_name
         else:
             # use Huggingface embeddings
             embed_model = llama_index.embeddings.HuggingFaceEmbedding(
-                model_name=embed_model_provider + "/" + embed_model_name)
+                model_name=embed_model_provider + '/' + embed_model_name)
 
         # create a service context
         service_context = llama_index.ServiceContext.from_defaults(
@@ -131,9 +192,15 @@ class Query:
         self.query_engine = index.as_query_engine()
 
     def display_exchange(self, query):
-        print("Query: %s\n" % query)
+        print('Query: %s\n' % query)
+
+        if self.model_name in MODELS.keys():
+            query = MODELS[self.model_name]['prompt_template'].replace('{prompt}', query)
+            if self.debug:
+                print('Query (prompt): %s\n' % query)
+
         response = self.query_engine.query(query)
-        print("Response: %s\n" % str(response).strip())
+        print('Response: %s\n' % str(response).strip())
 
 
 def str2bool(v):
@@ -157,20 +224,23 @@ def parse_arguments():
                         help='Use the CPU only instead of GPU acceleration')
     parser.add_argument('--temperature', type=float, default=TEMPERATURE,
                         help='The temperature value for the model (default: %(default)s)')
+    parser.add_argument('--max_new_tokens', type=float, default=MAX_NEW_TOKENS,
+                        help='The max new tokens value for the model (default: %(default)s)')
+    parser.add_argument('--context', '--context_window', type=float, default=CONTEXT_WINDOW,
+                        help='The context window value for the model (default: %(default)s)')
     parser.add_argument('--save', type=str2bool, nargs='?', const=True, default=False,
                         help='Save indexed vector store locally (default: %(default)s)')
     parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
                         help='Load indexed vector store (default: %(default)s)')
-    parser.add_argument('--data_path', type=str, default=DATA_PATH,
+    parser.add_argument('--data', '--data_path', type=str, default=DATA_PATH,
                         help='The path to data files to be indexed (default: %(default)s)')
-    parser.add_argument('--model_path', type=str, default=MODEL_PATH,
+    parser.add_argument('--path', '--model_path', type=str, default=MODEL_PATH,
                         help='The path to the directory for cached models (default: %(default)s)')
-    parser.add_argument('--storage_path', type=str, default=STORAGE_PATH,
+    parser.add_argument('--storage', '--storage_path', type=str, default=STORAGE_PATH,
                         help='The path to save and load the vector store (default: %(default)s)')
-    parser.add_argument('--model_size', '--size', choices=LLM_MODELS.keys(), default=MODEL_SIZE_DEFAULT,
-                        help='Select the model size (default: %(default)s)')
-    parser.add_argument('--model_url', help='Custom model URL, overrides model size selection')
-    parser.add_argument('--model_name', type=str, default=None,
+    parser.add_argument('--model_url', type=str, default=MODEL_URL_DEFAULT,
+                        help='Custom URL for model')
+    parser.add_argument('--model', '--model_name', type=str, default=None,
                         help='The name of the model to use (default: extracted from model url)')
     parser.add_argument('--embed_model_name', type=str, default=EMBED_MODEL_NAME,
                         help='The name of the embedding model to use (default: %(default)s)')
@@ -183,10 +253,11 @@ def parse_arguments():
 
     args = parser.parse_args()
 
-    if not args.model_url:
-        args.model_url = MODEL_URL_TEMPLATE.replace("{MODEL_SIZE}", str(LLM_MODELS[args.model_size]))
-    if not args.model_name:
-        args.model_name = args.model_url.split('/')[-1]
+    if not args.model:
+        args.model = args.model_url.split('/')[-1]
+
+    if str.lower(args.model) in MODEL_ALIASES.keys():
+        args.model = MODEL_ALIASES[args.model]
 
     return args
 
@@ -197,5 +268,5 @@ def main():
     llm_query.display_exchange(args.prompt)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
