@@ -4,6 +4,7 @@
 # See LICENSE file in the project root for full license information.
 
 import argparse
+import logging
 import typing
 
 import config
@@ -12,12 +13,17 @@ import config
 def parse_arguments_common(parser):
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=config.Config.DEBUG,
                         help='Enable debug mode (default: %(default)s)')
+    parser.add_argument('--level', '--log_level', type=str, default=logging.getLevelName(config.Config.LOG_LEVEL),
+                        help=f'Logging level (default: %(default)s)')
     parser.add_argument('--host', '--api_host', type=str, default=config.APIConfig.API_HOST,
                         help=f'Hostname or IP address of API service (default: %(default)s)')
     parser.add_argument('--port', '--api_port', type=str, default=config.APIConfig.API_PORT,
                         help=f'Port for API service (default: %(default)s)')
-    parser.add_argument('--cpu', action='store_const', const=0, default=config.Config.ENABLE_GPU,
+    parser.add_argument('--cpu', action='store_const', const=0,
                         help='Use the CPU only instead of GPU acceleration')
+    parser.add_argument('--gpus', '--enable_gpus', '--n_gpu_layers', action='store_const',
+                        default=config.Config.ENABLE_GPUS,
+                        help='One or more GPU layers will enable hardware acceleration (default: %(default)s)')
     parser.add_argument('--temperature', type=float, default=config.Config.TEMPERATURE,
                         help='The temperature value for the model (default: %(default)s)')
     parser.add_argument('--max_new_tokens', type=float, default=config.Config.MAX_NEW_TOKENS,
@@ -52,6 +58,20 @@ def parse_arguments_common(parser):
 def update_arguments_common(args):
     if str.lower(args.model) in config.Models.MODEL_ALIASES.keys():
         args.model = config.Models.MODEL_ALIASES[args.model]
+
+    if not hasattr(args, 'level') or args.level not in config.Config.LOG_LEVELS:
+        args.level = logging.getLevelName(config.Config.LOG_LEVEL) if not args.debug else logging.DEBUG
+
+    # Set number of GPU layers to one or more to enable hardware acceleration
+    if not hasattr(args, 'n_gpu_layers'):
+        args.n_gpu_layers = args.gpus
+
+    if args.cpu is None:
+        # Set CPU based on enabled GPUs
+        args.cpu = 0 if args.gpus > 0 else 1
+
+    if not hasattr(args, 'n_ctx') or not args.n_ctx:
+        args.n_ctx = args.context
 
     return args
 
