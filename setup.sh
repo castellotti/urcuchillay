@@ -38,7 +38,17 @@ case "$OS" in
     Darwin)
         SHELL_RC="$HOME/.zshrc"
         PYENV_VERSION=3.11.6
-        echo "Running on macOS. Installing using Homebrew..."
+        echo "Running on macOS."
+        if ! command -v brew >/dev/null 2>&1; then
+            echo "Homebrew not found. Please install it first."
+            echo
+            echo 'To install Homebrew, paste the following command into the terminal:'
+            echo "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+            echo
+            echo "For details please visit https://brew.sh"
+            exit 1
+        fi
+        echo "Installing dependencies using Homebrew..."
         brew install pyenv pyenv-virtualenv
         ;;
 
