@@ -239,7 +239,7 @@ def parse_arguments():
     parser.add_argument('--storage', '--storage_path', type=str, default=STORAGE_PATH,
                         help='The path to save and load the vector store (default: %(default)s)')
     parser.add_argument('--model_url', type=str, default=MODEL_URL_DEFAULT,
-                        help='Custom URL for model')
+                        help='Custom URL for model (defaults to the Llama-2-7b model)')
     parser.add_argument('--model', '--model_name', type=str, default=None,
                         help='The name of the model to use (default: extracted from model url)')
     parser.add_argument('--embed_model_name', type=str, default=EMBED_MODEL_NAME,
