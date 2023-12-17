@@ -42,7 +42,7 @@ class Server:
 
     def run(self):
         uvicorn.run(
-            self.app, host=os.getenv("HOST", self.host), port=int(os.getenv("PORT", self.port))
+            self.app, host=self.host, port=int(self.port)
         )
 
 
