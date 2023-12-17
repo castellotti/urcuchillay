@@ -5,8 +5,15 @@
 
 import json
 import os
+import sys
 
-import llama_cpp.server.app
+try:
+    import llama_cpp.server.app
+except ModuleNotFoundError as e:
+    print('\nError importing Python module(s)')
+    print('If installed using setup.sh it may be necessary to run:\n')
+    print('pyenv activate urcuchillay-env\n')
+    sys.exit(1)
 
 
 class Models:
