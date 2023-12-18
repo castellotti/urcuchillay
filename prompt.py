@@ -4,10 +4,9 @@
 # See LICENSE file in the project root for full license information.
 
 import argparse
-import logging
-import os
 import sys
 
+import client
 import config
 import utils
 
@@ -24,24 +23,12 @@ except ModuleNotFoundError as e:
 DEFAULT_PROMPT = 'What is Urcuchillay?'
 
 
-class Prompt:
+class Prompt(client.Client):
     def __init__(self, args):
 
-        self.debug = args.debug
-
-        logging.basicConfig(stream=sys.stdout, level=args.level)
-        logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
-
-        llama_debug = llama_index.callbacks.LlamaDebugHandler(print_trace_on_end=self.debug)
-        self.callback_manager = llama_index.callbacks.CallbackManager([llama_debug])
-
-        # Fallback settings for api_base, api_key, and api_version
-        os.environ['OPENAI_API_BASE'] = config.APIConfig.get_openai_api_base()
-        os.environ['OPENAI_API_KEY'] = config.APIConfig.OPENAI_API_KEY
-        os.environ['OPENAI_API_VERSION'] = config.APIConfig.OPENAI_API_VERSION
+        super().__init__(args)
 
         self.llm = llama_index.llms.OpenAI(
-            # api_base=config.APIConfig.get_openai_api_host(),
             api_base=config.APIConfig.get_openai_api_base(),
             api_key=config.APIConfig.OPENAI_API_KEY,
             api_version=config.APIConfig.OPENAI_API_VERSION,
@@ -52,27 +39,17 @@ class Prompt:
         )
 
         # create a service context
-        service_context = llama_index.ServiceContext.from_defaults(
+        self.service_context = llama_index.ServiceContext.from_defaults(
             llm=self.llm,
             callback_manager=self.callback_manager,
             context_window=config.Config.CONTEXT_WINDOW,
             num_output=config.Config.MAX_NEW_TOKENS,
         )
 
-        if args.load:
-            # load vector index from storage
-            storage_context = llama_index.StorageContext.from_defaults(persist_dir=args.storage)
-            index = llama_index.load_index_from_storage(storage_context, service_context=service_context)
-        else:
-            # load documents
-            documents = llama_index.SimpleDirectoryReader(args.data).load_data()
-            # create vector store index
-            index = llama_index.VectorStoreIndex.from_documents(
-                documents, service_context=service_context
-            )
+        self.get_index(args)
 
         # set up query engine
-        self.query_engine = index.as_query_engine()
+        self.query_engine = self.index.as_query_engine()
 
     def display_exchange(self, query):
         print('Query: %s\n' % query)
@@ -83,16 +60,11 @@ class Prompt:
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
-
     parser.add_argument('-p', '--prompt', type=str, default=DEFAULT_PROMPT,
                         help='The prompt to process (default: %(default)s)')
-
     parser = utils.parse_arguments_common(parser)
-
     args = parser.parse_args()
-
     args = utils.update_arguments_common(args)
-
     return args
 
 
