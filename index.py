@@ -60,10 +60,11 @@ class Index(client.Client):
             max_tokens=config.Config.MAX_NEW_TOKENS,
         )
 
+        # create a service context
         self.service_context = llama_index.ServiceContext.from_defaults(
             llm=self.llm,
             callback_manager=self.callback_manager,
-            context_window=config.Config.CONTEXT_WINDOW,
+            context_window=args.context,
             num_output=args.max_new_tokens,
         )
 

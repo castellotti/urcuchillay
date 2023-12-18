@@ -42,8 +42,8 @@ class Prompt(client.Client):
         self.service_context = llama_index.ServiceContext.from_defaults(
             llm=self.llm,
             callback_manager=self.callback_manager,
-            context_window=config.Config.CONTEXT_WINDOW,
-            num_output=config.Config.MAX_NEW_TOKENS,
+            context_window=args.context,
+            num_output=args.max_new_tokens,
         )
 
         self.get_index(args)
