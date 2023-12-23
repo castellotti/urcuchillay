@@ -5,9 +5,19 @@
 
 import argparse
 import logging
+import os
 import typing
+import uuid
 
 import config
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process command parameters')
+    parser = parse_arguments_common(parser)
+    args = parser.parse_args()
+    args = update_arguments_common(args)
+    return args
 
 
 def parse_arguments_common(parser):
@@ -119,3 +129,20 @@ def is_argument_defined(parser, argument_name):
         if f'--{argument_name}' in action.option_strings:
             return True
     return False
+
+
+def set_index_cache(args):
+    cache_directory = args.path
+    # llama_index will automatically assume models are cached in a subdirectory of the current path named
+    # "models" so we need to handle if a user explicitly included "models" at the end of --model_path
+    if os.path.basename(args.path) == 'models':
+        cache_directory = os.path.dirname(args.path)
+
+    os.environ['LLAMA_INDEX_CACHE_DIR'] = cache_directory
+
+
+def generate_message_id():
+    # Generate a random UUID (UUIDv4)
+    random_uuid = uuid.uuid4()
+    # Return the formatted message ID
+    return f"cmpl-{random_uuid}"
