@@ -10,6 +10,7 @@ import sys
 
 try:
     import llama_cpp.server.app
+    import llama_index.chat_engine.types
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
     print('If installed using setup.sh it may be necessary to run:\n')
@@ -102,6 +103,11 @@ class Config:
     MODEL_DEFAULT = Models.MODEL_ALIASES['mistral-7b']
     MODEL_URL_DEFAULT = Models.MODELS[MODEL_DEFAULT]['url']
     EMBED_MODEL_NAME = 'local'
+
+    # First condense a conversation and latest user message to a standalone question.
+    # Then build a context for the standalone question from a retriever,
+    # Then pass the context along with prompt and user message to LLM to generate a response.
+    CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_PLUS_CONTEXT
 
 
 class APIConfig:

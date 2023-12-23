@@ -42,6 +42,8 @@ class Gateway(client.Client):
         self.set_index(args)
         self.engine = None
 
+        self.chat_mode = config.Config.CHAT_MODE
+
 
 arguments = utils.parse_arguments()
 gateway = Gateway(arguments)
@@ -57,17 +59,16 @@ async def completions_endpoint(request_data: schemas.openai.CompletionsRequest, 
     # Log the request data for debugging
     logging.debug("Request Data:", request_data)
 
-    prompt = request_data.prompt
-    # max_tokens = request_data.max_tokens
-
     created = int(time.time())
 
     if not request_data.stream:
         gateway.engine = gateway.index.as_query_engine()
-        result = gateway.engine.query(prompt)
+        result = gateway.engine.query(request_data.prompt)
 
         response = {
             "id": utils.generate_message_id(),
+            "object": "text_completion",
+            "created": created,
             "model": request_data.model,
             "choices": [
                 {
@@ -76,7 +77,6 @@ async def completions_endpoint(request_data: schemas.openai.CompletionsRequest, 
                     "finish_reason": "length",
                 },
             ],
-            "created": created
         }
         return response
 
@@ -87,7 +87,6 @@ async def completions_endpoint(request_data: schemas.openai.CompletionsRequest, 
         # Use generator to handle streaming response
         def generate_responses():
             streaming_response = gateway.engine.query(request_data.prompt)
-
             tokens = list(streaming_response.response_gen)  # Convert generator to list
 
             for i, token in enumerate(tokens):
@@ -96,24 +95,19 @@ async def completions_endpoint(request_data: schemas.openai.CompletionsRequest, 
                 choice = {
                     "text": f"{token}",
                     "index": 0,
-                    "logprobs": None,
                     "finish_reason": finish_reason,
                 }
 
                 # Format the chunk as in the OpenAI API response
                 chunk_data = {
                     'id': message_id,
-                    'model': request_data.model,
-                    'created': int(time.time()),
                     'object': 'text_completion',
+                    'created': created,
+                    'model': request_data.model,
                     'choices': [choice],
                 }
                 chunk = f"data: {json.dumps(chunk_data)}\n\n"
                 yield chunk
-
-            # Indicate completion
-            done = "data: [DONE]\n\n"
-            yield done
 
         return fastapi.responses.StreamingResponse(generate_responses(), media_type="text/event-stream")
 
@@ -125,9 +119,10 @@ async def create_chat_completions(request_data: schemas.openai.ChatCompletionsRe
 
     logging.debug("Request Data:", request_data)
 
-    gateway.engine = gateway.index.as_chat_engine()
+    gateway.engine = gateway.index.as_chat_engine(chat_mode=gateway.chat_mode)
 
     message_id = utils.generate_message_id()
+    created = int(time.time())
 
     # Use generator to handle streaming response
     def generate_responses():
@@ -151,16 +146,12 @@ async def create_chat_completions(request_data: schemas.openai.ChatCompletionsRe
                     chunk_data = {
                         'id': message_id,
                         'model': request_data.model,
-                        'created': int(time.time()),
+                        'created': created,
                         'object': 'chat.completion.chunk',
                         'choices': [choice],
                     }
                     chunk = f"data: {json.dumps(chunk_data)}\n\n"
                     yield chunk
-
-        # Indicate completion
-        done = "data: [DONE]\n\n"
-        yield done
 
     return schemas.openai.CustomStreamingResponse(generate_responses())
 
