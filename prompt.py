@@ -7,7 +7,6 @@ import argparse
 import sys
 
 import client
-import config
 import utils
 
 try:
@@ -28,25 +27,8 @@ class Prompt(client.Client):
 
         super().__init__(args)
 
-        self.llm = llama_index.llms.OpenAI(
-            api_base=config.APIConfig.get_openai_api_base(),
-            api_key=config.APIConfig.OPENAI_API_KEY,
-            api_version=config.APIConfig.OPENAI_API_VERSION,
-            callback_manager=self.callback_manager,
-            temperature=args.temperature,
-            model="text-davinci-002",
-            max_tokens=config.Config.MAX_NEW_TOKENS,
-        )
-
-        # create a service context
-        self.service_context = llama_index.ServiceContext.from_defaults(
-            llm=self.llm,
-            callback_manager=self.callback_manager,
-            context_window=args.context,
-            num_output=args.max_new_tokens,
-        )
-
-        self.get_index(args)
+        self.set_llm(args)
+        self.set_index(args)
 
         # set up query engine
         self.query_engine = self.index.as_query_engine()
