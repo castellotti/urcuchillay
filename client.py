@@ -39,7 +39,24 @@ class Client:
         self.service_context = None
         self.index = None
 
-    def get_index(self, args):
+    def set_llm(self, args):
+        self.llm = llama_index.llms.OpenAI(
+            model="text-davinci-002",
+            temperature=args.temperature,
+            max_tokens=args.max_new_tokens,
+            callback_manager=self.callback_manager,
+            api_base=config.APIConfig.get_openai_api_base(),
+            api_key=config.APIConfig.OPENAI_API_KEY,
+            api_version=config.APIConfig.OPENAI_API_VERSION,
+        )
+
+        self.service_context = llama_index.ServiceContext.from_defaults(
+            llm=self.llm,
+            context_window=args.context,
+            num_output=args.max_new_tokens,
+        )
+
+    def set_index(self, args):
         if args.load:
             # load vector index from storage
             storage_context = llama_index.StorageContext.from_defaults(persist_dir=args.storage)
