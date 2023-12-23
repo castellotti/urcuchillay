@@ -4,6 +4,7 @@
 # See LICENSE file in the project root for full license information.
 
 import argparse
+import logging
 import os
 import sys
 
@@ -12,8 +13,6 @@ import utils
 
 try:
     import llama_cpp.server.app
-    import llama_index
-    import transformers
     import uvicorn
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
@@ -24,6 +23,10 @@ except ModuleNotFoundError as e:
 
 class Server:
     def __init__(self, args):
+
+        level = logging.DEBUG if args.debug else logging.INFO
+        logging.basicConfig(stream=sys.stdout, level=level)
+        logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
         if not args.model:
             args.model = os.path.join(os.getcwd(), 'models', config.Config.MODEL_DEFAULT)
