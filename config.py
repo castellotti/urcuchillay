@@ -108,6 +108,9 @@ class APIConfig:
     API_HOST = 'localhost'  # llama_cpp.server.app.Settings.host
     API_PORT = 8000  # llama_cpp.server.app.Settings.port
 
+    GATEWAY_HOST = API_HOST
+    GATEWAY_PORT = 8080
+
     @staticmethod
     def get_docker_openai_api_host():
         return f'http://host.docker.internal:{APIConfig.API_PORT}'
