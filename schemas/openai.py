@@ -5,8 +5,9 @@
 
 import uuid
 import fastapi
-from pydantic import BaseModel
-from typing import List, Optional, Union
+from enum import Enum
+from pydantic import BaseModel, Field
+from typing import Any, List, Optional, Union
 
 
 # header
@@ -42,10 +43,17 @@ class CompletionsRequest(BaseModel):
 
 
 # /v1/chat/completions
+class MessageRole(Enum):
+    USER = 'user'
+    SYSTEM = 'system'
+    ASSISTANT = 'assistant'
+
+
 class ChatMessage(BaseModel):
-    role: str  # 'user' or 'assistant'
-    content: str  # The message content
+    role: MessageRole = MessageRole.USER
+    content: Optional[Any] = ""  # The message content
     id: Optional[str] = None  # Optional unique identifier for the message
+    additional_kwargs: dict = Field(default_factory=dict)
 
 
 class ChatCompletionsRequest(BaseModel):
