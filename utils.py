@@ -25,9 +25,13 @@ def parse_arguments_common(parser):
                         help='Enable debug mode (default: %(default)s)')
     parser.add_argument('--level', '--log_level', type=str, default=logging.getLevelName(config.Config.LOG_LEVEL),
                         help=f'Logging level (default: %(default)s)')
-    parser.add_argument('--host', '--api_host', type=str, default=config.APIConfig.API_HOST,
+    parser.add_argument('--host', '--gateway_host', type=str, default=config.Config.GATEWAY_HOST,
+                        help=f'Hostname or IP address of gateway service (default: %(default)s)')
+    parser.add_argument('--port', '--gateway_port', type=str, default=config.Config.GATEWAY_PORT,
+                        help=f'Port for gateway service (default: %(default)s)')
+    parser.add_argument('--api_host', '--openai_host', type=str, default=config.APIConfig.API_HOST,
                         help=f'Hostname or IP address of API service (default: %(default)s)')
-    parser.add_argument('--port', '--api_port', type=str, default=config.APIConfig.API_PORT,
+    parser.add_argument('--api_port', '--openai_port', type=str, default=config.APIConfig.API_PORT,
                         help=f'Port for API service (default: %(default)s)')
     parser.add_argument('--cpu', action='store_const', const=0,
                         help='Use the CPU only instead of GPU acceleration')
@@ -44,6 +48,8 @@ def parse_arguments_common(parser):
                         help='Save indexed vector store locally (default: %(default)s)')
     parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
                         help='Load indexed vector store (default: %(default)s)')
+    parser.add_argument('--reset', '--clear', type=str2bool, nargs='?', const=True, default=False,
+                        help='Reset indexed vector store (default: %(default)s)')
     parser.add_argument('--data', '--data_path', type=str, default=config.Config.DATA_PATH,
                         help='The path to data files to be indexed (default: %(default)s)')
     parser.add_argument('--path', '--model_path', type=str, default=config.Config.MODEL_PATH,
@@ -54,14 +60,6 @@ def parse_arguments_common(parser):
                         help='Custom URL for model (defaults to the mistral-7b model)')
     parser.add_argument('--model', '--model_name', type=str, default=config.Config.MODEL_DEFAULT,
                         help='The name of the model to use (default: extracted from model url)')
-    parser.add_argument('--embed_model_name', type=str, default=config.Config.EMBED_MODEL_NAME,
-                        help='The name of the embedding model to use (default: %(default)s)')
-    parser.add_argument('--embed_model_provider', type=str, default=None,
-                        help='The provider of the embedding model to use (default: %(default)s)')
-    parser.add_argument('--pretrained_model_name', type=str, default=None,
-                        help='The name of the pretrained model to use (default: %(default)s)')
-    parser.add_argument('--pretrained_model_provider', type=str, default=None,
-                        help='The provider of the pretrained model to use (default: %(default)s)')
     return parser
 
 
@@ -125,6 +123,7 @@ def contains_list_type(annotation) -> bool:
 
 def is_argument_defined(parser, argument_name):
     """Skip arguments already included in parse_arguments_common."""
+    # TODO Access to a protected member _actions of a class
     for action in parser._actions:
         if f'--{argument_name}' in action.option_strings:
             return True
