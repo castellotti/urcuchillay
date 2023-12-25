@@ -3,7 +3,6 @@
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
-import logging
 import os
 import sys
 
@@ -23,9 +22,6 @@ class Client:
     def __init__(self, args):
 
         self.debug = args.debug
-
-        logging.basicConfig(stream=sys.stdout, level=args.level)
-        logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
         llama_debug = llama_index.callbacks.LlamaDebugHandler(print_trace_on_end=self.debug)
         self.callback_manager = llama_index.callbacks.CallbackManager([llama_debug])
