@@ -53,7 +53,7 @@ class Client:
         )
 
     def set_index(self, args):
-        if args.load:
+        if args.load and config.storage_verify(args.storage):
             # load vector index from storage
             storage_context = llama_index.StorageContext.from_defaults(persist_dir=args.storage)
             self.index = llama_index.load_index_from_storage(storage_context, service_context=self.service_context)
