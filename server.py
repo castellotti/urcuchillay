@@ -27,6 +27,7 @@ class Server:
         level = logging.DEBUG if args.debug else logging.INFO
         logging.basicConfig(stream=sys.stdout, level=level)
         logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+        logging.getLogger().name = __name__
 
         if not args.model:
             args.model = os.path.join(os.getcwd(), 'models', config.Config.MODEL_DEFAULT)
@@ -39,8 +40,8 @@ class Server:
         filtered_args = {k: v for k, v in vars(args).items() if k in valid_field_names and v is not None}
         settings = llama_cpp.server.app.Settings(**filtered_args)
 
-        self.host = args.host
-        self.port = args.port
+        self.host = args.api_host
+        self.port = args.api_port
         self.app = llama_cpp.server.app.create_app(settings=settings)
 
     def run(self):
@@ -51,7 +52,6 @@ class Server:
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
-
     parser = utils.parse_arguments_common(parser)
 
     for name, field in llama_cpp.server.app.Settings.model_fields.items():
@@ -80,9 +80,7 @@ def parse_arguments():
         parser.add_argument(f"--{name}", **arg_params)
 
     args = parser.parse_args()
-
     args = utils.update_arguments_common(args)
-
     return args
 
 
