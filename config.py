@@ -91,6 +91,9 @@ class Config:
 
     CONFIG_FILE = 'config.json'
 
+    GATEWAY_HOST = 'localhost'
+    GATEWAY_PORT = 8080
+
     ENABLE_GPUS = 1  # One or more GPU layers will enable hardware acceleration (1 is correct for Apple Silicon)
     TEMPERATURE = 0.1
     MAX_NEW_TOKENS = 256
@@ -103,6 +106,12 @@ class Config:
     MODEL_DEFAULT = Models.MODEL_ALIASES['mistral-7b']
     MODEL_URL_DEFAULT = Models.MODELS[MODEL_DEFAULT]['url']
     EMBED_MODEL_NAME = 'local'
+
+    STORAGE_FILES = ['default__vector_store.json',
+                     'docstore.json',
+                     'graph_store.json',
+                     'image__vector_store.json',
+                     'index_store.json']
 
     # https://docs.llamaindex.ai/en/stable/module_guides/deploying/chat_engines/usage_pattern.html#available-chat-modes
 
@@ -124,9 +133,6 @@ class APIConfig:
     API_HOST = 'localhost'  # llama_cpp.server.app.Settings.host
     API_PORT = 8000  # llama_cpp.server.app.Settings.port
 
-    GATEWAY_HOST = API_HOST
-    GATEWAY_PORT = 8080
-
     @staticmethod
     def get_docker_openai_api_host():
         return f'http://host.docker.internal:{APIConfig.API_PORT}'
@@ -141,6 +147,21 @@ class APIConfig:
 
     OPENAI_API_KEY = 'xxxxxxxx'
     OPENAI_API_VERSION = '1'
+
+
+def storage_verify(storage_path=Config.STORAGE_PATH):
+    verified = True
+    for file in Config.STORAGE_FILES:
+        if not os.path.exists(os.path.join(storage_path, file)):
+            verified = False
+    return verified
+
+
+def storage_reset(storage_path=Config.STORAGE_PATH):
+    for file in Config.STORAGE_FILES:
+        filepath = os.path.join(storage_path, file)
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
 
 def load_config():
