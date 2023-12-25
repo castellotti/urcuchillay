@@ -4,6 +4,7 @@
 # See LICENSE file in the project root for full license information.
 
 import argparse
+import logging
 import sys
 
 import client
@@ -27,6 +28,8 @@ class Prompt(client.Client):
 
         super().__init__(args)
 
+        logging.getLogger().name = __name__
+
         self.set_llm(args)
         self.set_index(args)
 
@@ -42,9 +45,11 @@ class Prompt(client.Client):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
+    parser = utils.parse_arguments_common(parser)
+
     parser.add_argument('-p', '--prompt', type=str, default=DEFAULT_PROMPT,
                         help='The prompt to process (default: %(default)s)')
-    parser = utils.parse_arguments_common(parser)
+
     args = parser.parse_args()
     args = utils.update_arguments_common(args)
     return args
