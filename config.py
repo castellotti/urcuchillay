@@ -104,10 +104,20 @@ class Config:
     MODEL_URL_DEFAULT = Models.MODELS[MODEL_DEFAULT]['url']
     EMBED_MODEL_NAME = 'local'
 
+    # https://docs.llamaindex.ai/en/stable/module_guides/deploying/chat_engines/usage_pattern.html#available-chat-modes
+
+    # First generate a standalone question from conversation context and last message,
+    # then query the query engine for a response.
+    # CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_QUESTION
+
+    # First retrieve text from the index using the user's message, then use the context
+    # in the system prompt to generate a response.
+    CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONTEXT
+
     # First condense a conversation and latest user message to a standalone question.
     # Then build a context for the standalone question from a retriever,
     # Then pass the context along with prompt and user message to LLM to generate a response.
-    CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_PLUS_CONTEXT
+    # CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_PLUS_CONTEXT
 
 
 class APIConfig:
