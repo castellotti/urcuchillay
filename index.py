@@ -4,9 +4,11 @@
 # See LICENSE file in the project root for full license information.
 
 import argparse
+import logging
 import sys
 
 import client
+import config
 import utils
 
 try:
@@ -24,6 +26,8 @@ class Index(client.Client):
 
         super().__init__(args)
 
+        logging.getLogger().name = __name__
+
         utils.set_index_cache(args)
 
         if args.pretrained_model_name is not None:
@@ -34,6 +38,10 @@ class Index(client.Client):
             )
 
         self.set_llm(args)
+
+        if args.reset:
+            config.storage_reset(storage_path=args.storage)
+
         self.set_index(args)
 
         if args.save:
@@ -44,6 +52,12 @@ class Index(client.Client):
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
     parser = utils.parse_arguments_common(parser)
+
+    parser.add_argument('--pretrained_model_name', type=str, default=None,
+                        help='The name of the pretrained model to use (default: %(default)s)')
+    parser.add_argument('--pretrained_model_provider', type=str, default=None,
+                        help='The provider of the pretrained model to use (default: %(default)s)')
+
     args = parser.parse_args()
     args = utils.update_arguments_common(args)
     return args
