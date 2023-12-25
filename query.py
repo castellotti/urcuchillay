@@ -135,16 +135,21 @@ class Query:
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')
+    parser = utils.parse_arguments_common(parser)
 
     parser.add_argument('-p', '--prompt', type=str, default=DEFAULT_PROMPT,
                         help='The prompt to process (default: %(default)s)')
-
-    parser = utils.parse_arguments_common(parser)
+    parser.add_argument('--embed_model_name', type=str, default=config.Config.EMBED_MODEL_NAME,
+                        help='The name of the embedding model to use (default: %(default)s)')
+    parser.add_argument('--embed_model_provider', type=str, default=None,
+                        help='The provider of the embedding model to use (default: %(default)s)')
+    parser.add_argument('--pretrained_model_name', type=str, default=None,
+                        help='The name of the pretrained model to use (default: %(default)s)')
+    parser.add_argument('--pretrained_model_provider', type=str, default=None,
+                        help='The provider of the pretrained model to use (default: %(default)s)')
 
     args = parser.parse_args()
-
     args = utils.update_arguments_common(args)
-
     return args
 
 
