@@ -173,7 +173,7 @@ async def create_chat_completions(request_data: schemas.openai.ChatCompletionsRe
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
 async def forward(request: fastapi.Request, path: str):
     # Forward the request to the OpenAI API server
-    url = f"http://{arguments.host}:{arguments.port}/{path}"
+    url = f"http://{arguments.api_host}:{arguments.api_port}/{path}"
 
     # Initialize body to None
     body = None
@@ -205,7 +205,7 @@ async def forward(request: fastapi.Request, path: str):
 
 
 def main():
-    uvicorn.run(app, host=config.APIConfig.GATEWAY_HOST, port=config.APIConfig.GATEWAY_PORT)
+    uvicorn.run(app, host=arguments.host, port=arguments.port)
 
 
 if __name__ == "__main__":
