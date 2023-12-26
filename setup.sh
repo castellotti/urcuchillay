@@ -52,7 +52,7 @@ case "$OS" in
             exit 1
         fi
         echo "Installing dependencies using Homebrew..."
-        brew install pyenv pyenv-virtualenv
+        zsh -c "brew install pyenv pyenv-virtualenv"
         ;;
 
     Linux)
