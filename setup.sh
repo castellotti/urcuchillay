@@ -169,7 +169,6 @@ PYENV_COMMENT="# pyenv and virtualenv initialization"
 PYENV_COMMENT_ADDED=false
 AUTO_ACCEPT=false
 
-echo # newline
 echo "Checking if auto-activation of virtualenvs is enabled..."
 if [ ! -f "$SHELL_RC" ]; then
     echo "Creating $SHELL_RC since it does not exist."
@@ -179,6 +178,7 @@ fi
 for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
     if ! grep -Fxq "$line" "$SHELL_RC"; then
         if [ "$AUTO_ACCEPT" = false ]; then
+            echo # newline for better visibility
             echo "We would like to add auto-activation commands to your environment"
             printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
             # Read input directly from the terminal in case piped from curl
