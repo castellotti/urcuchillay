@@ -167,30 +167,39 @@ PYENV_INIT="eval \"\$(pyenv init -)\""
 PYENV_VIRTUALENV_INIT="eval \"\$(pyenv virtualenv-init -)\""
 PYENV_COMMENT="# pyenv and virtualenv initialization"
 PYENV_COMMENT_ADDED=false
+AUTO_ACCEPT=false
 
 echo # newline
 echo "Checking if auto-activation of virtualenvs is enabled..."
 if [ ! -f "$SHELL_RC" ]; then
     echo "Creating $SHELL_RC since it does not exist."
     touch "$SHELL_RC"
+    AUTO_ACCEPT=true
 fi
 for line in "$PYENV_PATH" "$PYENV_INIT_PATH" "$PYENV_INIT" "$PYENV_VIRTUALENV_INIT"; do
     if ! grep -Fxq "$line" "$SHELL_RC"; then
-        printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
-        # Read input directly from the terminal in case piped from curl
-        if read -r REPLY </dev/tty; then
-          if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
-              # Add a comment block for first new entry during this session
-              if [ "$PYENV_COMMENT_ADDED" = false ]; then
-                  printf "\n%s\n" "$PYENV_COMMENT" >> "$SHELL_RC"
-                  PYENV_COMMENT_ADDED=true
+        if [ "$AUTO_ACCEPT" = false ]; then
+            echo "We would like to add auto-activation commands to your environment"
+            printf "Add '%s' to %s? (y/N) " "$line" "$SHELL_RC"
+            # Read input directly from the terminal in case piped from curl
+            if read -r REPLY </dev/tty; then
+              if [ "$REPLY" = "Y" ] || [ "$REPLY" = "y" ]; then
+                  AUTO_ACCEPT=true
+              else
+                  echo "Skipping '$line'"
+                  continue
               fi
-              echo "Adding '$line' to $SHELL_RC"
-              echo "$line" >> "$SHELL_RC"
-          else
-              echo "Skipping '$line'"
-          fi
+            else
+                continue
+            fi
         fi
+        # Add a comment block for first new entry during this session
+        if [ "$PYENV_COMMENT_ADDED" = false ]; then
+            printf "\n%s\n" "$PYENV_COMMENT" >> "$SHELL_RC"
+            PYENV_COMMENT_ADDED=true
+        fi
+        echo "Adding '$line' to $SHELL_RC"
+        echo "$line" >> "$SHELL_RC"
     else
         echo "'$line' already exists in $SHELL_RC"
     fi
