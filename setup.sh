@@ -52,7 +52,8 @@ case "$OS" in
             exit 1
         fi
         echo "Installing dependencies using Homebrew..."
-        (brew install pyenv pyenv-virtualenv)
+        brew install ca-certificates  # install separately due to a package issue (2023-12-12)
+        brew install pyenv pyenv-virtualenv
         ;;
 
     Linux)
