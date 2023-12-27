@@ -37,16 +37,17 @@ class Index(client.Client):
                 ).encode
             )
 
-        self.set_llm(args)
+        llm = self.get_llm(args)
+        service_context = self.get_service_context(llm, args)
 
         if args.reset:
             config.storage_reset(storage_path=args.storage)
 
-        self.set_index(args)
+        index = self.get_index(service_context, args)
 
         if args.save:
             # persist the index to disk
-            self.index.storage_context.persist(persist_dir=args.storage)
+            index.storage_context.persist(persist_dir=args.storage)
 
 
 def parse_arguments():

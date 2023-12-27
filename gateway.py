@@ -38,8 +38,9 @@ class Gateway(client.Client):
         logging.basicConfig(stream=sys.stdout, level=level)
         logging.getLogger().name = __name__
 
-        self.set_llm(args)
-        self.set_index(args)
+        self.llm = self.get_llm(args)
+        self.service_context = self.get_service_context(self.llm, args)
+        self.index = self.get_index(self.service_context, args)
         self.engine = None
 
         self.chat_mode = config.Config.CHAT_MODE

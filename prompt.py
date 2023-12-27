@@ -30,11 +30,12 @@ class Prompt(client.Client):
 
         logging.getLogger().name = __name__
 
-        self.set_llm(args)
-        self.set_index(args)
+        llm = self.get_llm(args)
+        service_context = self.get_service_context(llm, args)
+        index = self.get_index(service_context, args)
 
         # set up query engine
-        self.query_engine = self.index.as_query_engine()
+        self.query_engine = index.as_query_engine()
 
     def display_exchange(self, query):
         print('Query: %s\n' % query)
