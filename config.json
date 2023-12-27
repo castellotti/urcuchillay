@@ -1,7 +1,7 @@
 {
   "Config": {
     "DEBUG": false,
-    "MODEL_DEFAULT": "mistral-7b-v0.1.Q4_K_M.gguf"
+    "MODEL_DEFAULT": "mistral-7b-instruct-v0.1.Q4_K_M.gguf"
   },
   "APIConfig": {
     "API_HOST": "127.0.0.1",
