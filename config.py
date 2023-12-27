@@ -11,6 +11,7 @@ import sys
 try:
     import llama_cpp.server.app
     import llama_index.chat_engine.types
+    import llama_index.constants
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
     print('If installed using setup.sh it may be necessary to run:\n')
@@ -44,10 +45,11 @@ class Models:
             'model_creator': 'Meta',
             'model_provider': 'TheBloke',  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
         },
-        'mistral-7b-v0.1.Q4_K_M.gguf': {
-            'model': 'https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF',
-            'url': 'https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF/resolve/main/mistral-7b-v0.1.Q4_K_M.gguf',
-            'prompt_template': '[INST] {prompt} [/INST]',
+        'mistral-7b-instruct-v0.1.Q4_K_M.gguf': {
+            'model': 'https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF',
+            'url': 'https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/' +
+                   'resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf',
+            'prompt_template': '<s>[INST] {prompt} [/INST]',
             'model_creator': 'Mistral AI',
             'model_provider': 'TheBloke',  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
         },
@@ -74,8 +76,9 @@ class Models:
         'small': 'llama-2-7b-chat.Q4_K_M.gguf',
         'medium': 'llama-2-13b-chat.Q4_K_M.gguf',
         'large': 'llama-2-70b-chat.Q4_K_M.gguf',
-        'mistral': 'mistral-7b-v0.1.Q4_K_M.gguf',
-        'mistral-7b': 'mistral-7b-v0.1.Q4_K_M.gguf',
+        'mistral': 'mistral-7b-instruct-v0.1.Q4_K_M.gguf',
+        'mistral-7b': 'mistral-7b-instruct-v0.1.Q4_K_M.gguf',
+        'mistral-7b-instruct': 'mistral-7b-instruct-v0.1.Q4_K_M.gguf',
         'mixtral': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
         'mixtral-instruct': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
         'mixtral-8x7b': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
@@ -95,17 +98,17 @@ class Config:
     GATEWAY_PORT = 8080
 
     ENABLE_GPUS = 1  # One or more GPU layers will enable hardware acceleration (1 is correct for Apple Silicon)
-    TEMPERATURE = 0.1
-    MAX_NEW_TOKENS = 256
-    CONTEXT_WINDOW = 4096
+    TEMPERATURE = llama_index.constants.DEFAULT_TEMPERATURE  # 0.1
+    CONTEXT_WINDOW = llama_index.constants.DEFAULT_CONTEXT_WINDOW  # 3900 tokens
+    MAX_NEW_TOKENS = llama_index.constants.DEFAULT_NUM_OUTPUTS  # 256 tokens
 
     DATA_PATH = os.path.join(os.getcwd(), 'data')
     MODEL_PATH = os.path.join(os.getcwd(), 'models')
     STORAGE_PATH = os.path.join(os.getcwd(), 'storage')
 
-    MODEL_DEFAULT = Models.MODEL_ALIASES['mistral-7b']
+    MODEL_DEFAULT = Models.MODEL_ALIASES['mistral-7b-instruct']
     MODEL_URL_DEFAULT = Models.MODELS[MODEL_DEFAULT]['url']
-    EMBED_MODEL_NAME = 'local'
+    EMBED_MODEL_NAME = 'default'
 
     STORAGE_FILES = ['default__vector_store.json',
                      'docstore.json',
