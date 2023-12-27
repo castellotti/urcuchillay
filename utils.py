@@ -6,6 +6,7 @@
 import argparse
 import logging
 import os
+import tempfile
 import typing
 import uuid
 
@@ -44,7 +45,7 @@ def parse_arguments_common(parser):
                         help='The max new tokens value for the model (default: %(default)s)')
     parser.add_argument('--context', '--context_window', type=float, default=config.Config.CONTEXT_WINDOW,
                         help='The context window value for the model (default: %(default)s)')
-    parser.add_argument('--save', type=str2bool, nargs='?', const=True, default=False,
+    parser.add_argument('--save', type=str2bool, nargs='?', const=True, default=True,
                         help='Save indexed vector store locally (default: %(default)s)')
     parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
                         help='Load indexed vector store (default: %(default)s)')
@@ -145,3 +146,11 @@ def generate_message_id():
     random_uuid = uuid.uuid4()
     # Return the formatted message ID
     return f"cmpl-{random_uuid}"
+
+
+def create_temporary_empty_file():
+    # Create a temporary empty file and return its path
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    temp_file_path = temp_file.name
+    temp_file.close()
+    return temp_file_path
