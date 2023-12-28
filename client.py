@@ -28,7 +28,7 @@ class Client:
         self.callback_manager = llama_index.callbacks.CallbackManager([llama_debug])
 
         # Fallback settings for api_base, api_key, and api_version
-        os.environ['OPENAI_API_BASE'] = config.APIConfig.get_openai_api_base()
+        os.environ['OPENAI_API_BASE'] = config.APIConfig.get_openai_api_base(host=args.api_host, port=args.api_port)
         os.environ['OPENAI_API_KEY'] = config.APIConfig.OPENAI_API_KEY
         os.environ['OPENAI_API_VERSION'] = config.APIConfig.OPENAI_API_VERSION
 
@@ -41,7 +41,7 @@ class Client:
             model="text-davinci-002",
             temperature=args.temperature,
             max_tokens=args.max_new_tokens,
-            api_base=config.APIConfig.get_openai_api_base(),
+            api_base=config.APIConfig.get_openai_api_base(host=args.api_host, port=args.api_port),
             api_key=config.APIConfig.OPENAI_API_KEY,
             api_version=config.APIConfig.OPENAI_API_VERSION,
             callback_manager=self.callback_manager,

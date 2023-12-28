@@ -135,21 +135,20 @@ class Config:
 class APIConfig:
     API_HOST = 'localhost'  # llama_cpp.server.app.Settings.host
     API_PORT = 8000  # llama_cpp.server.app.Settings.port
-
-    @staticmethod
-    def get_docker_openai_api_host():
-        return f'http://host.docker.internal:{APIConfig.API_PORT}'
-
-    @staticmethod
-    def get_openai_api_host():
-        return f'http://{APIConfig.API_HOST}:{APIConfig.API_PORT}'
-
-    @staticmethod
-    def get_openai_api_base():
-        return f'http://{APIConfig.API_HOST}:{APIConfig.API_PORT}/v{APIConfig.OPENAI_API_VERSION}'
-
-    OPENAI_API_KEY = 'xxxxxxxx'
     OPENAI_API_VERSION = '1'
+    OPENAI_API_KEY = 'xxxxxxxx'
+
+    @staticmethod
+    def get_docker_openai_api_host(port=API_PORT):
+        return f'http://host.docker.internal:{port}'
+
+    @staticmethod
+    def get_openai_api_host(host=API_HOST, port=API_PORT):
+        return f'http://{host}:{port}'
+
+    @staticmethod
+    def get_openai_api_base(host=API_HOST, port=API_PORT, version=OPENAI_API_VERSION):
+        return f'http://{host}:{port}/v{version}'
 
 
 def storage_verify(storage_path=Config.STORAGE_PATH):
