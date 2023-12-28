@@ -64,6 +64,11 @@ class Server:
             if args.model in config.Models.MODELS:
                 args.model_url = config.Models.MODELS[args.model]['url']
 
+        try:
+            os.makedirs(args.path, exist_ok=True)
+        except Exception as e:
+            print(f"Error occurred while creating directory: {e}")
+
             args.model = os.path.join(args.path, utils.get_valid_filename(args.model_url))
             model_path = os.path.join(os.getcwd(), str(args.model))
 
