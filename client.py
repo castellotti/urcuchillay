@@ -66,7 +66,8 @@ class Client:
             num_output=args.max_new_tokens,
         )
 
-    def get_index(self, service_context, args):
+    @staticmethod
+    def get_index(service_context, args):
         if not os.path.exists(args.data) or not os.listdir(args.data):
             # Create a temporary empty file for the index if a missing or empty data directory was supplied
             temp_file = utils.create_temporary_empty_file()
