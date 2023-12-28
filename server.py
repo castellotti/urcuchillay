@@ -5,10 +5,8 @@
 
 import argparse
 import logging
-import os
 import sys
 
-import config
 import utils
 
 try:
@@ -30,7 +28,7 @@ class Server:
         logging.getLogger().name = __name__ if __name__ != '__main__' else 'server'
 
         # Determine path to model file and if necessary download from URL
-        args.model = self.get_model(args)
+        args.model = utils.get_model(args)
 
         # Collect and filter valid field names for llama_cpp.server
         valid_field_names = set(llama_cpp.server.app.Settings.model_fields.keys())
@@ -45,36 +43,6 @@ class Server:
         uvicorn.run(
             self.app, host=self.host, port=int(self.port)
         )
-
-    @staticmethod
-    def get_model(args):
-        if os.path.exists(args.model):
-            pass
-        if os.path.exists(os.path.join(os.getcwd(), args.model)):
-            args.model = os.path.join(os.getcwd(), args.model)
-        elif os.path.exists(os.path.join(args.path, args.model)):
-            args.model = os.path.join(args.path, args.model)
-        elif os.path.exists(os.path.join(os.getcwd(), args.path, args.model)):
-            args.model = os.path.join(os.getcwd(), args.path, args.model)
-        else:
-            logging.warning(f'Model not found. Downloading from URL.')
-
-            if args.model in config.Models.MODEL_ALIASES.keys():
-                args.model = config.Models.MODEL_ALIASES[args.model]
-            if args.model in config.Models.MODELS:
-                args.model_url = config.Models.MODELS[args.model]['url']
-
-        try:
-            os.makedirs(args.path, exist_ok=True)
-        except Exception as e:
-            print(f"Error occurred while creating directory: {e}")
-
-            args.model = os.path.join(args.path, utils.get_valid_filename(args.model_url))
-            model_path = os.path.join(os.getcwd(), str(args.model))
-
-            utils.download_url(model_url=args.model_url, model_path=model_path)
-
-        return args.model
 
 
 def parse_arguments():
