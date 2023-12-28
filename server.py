@@ -13,6 +13,7 @@ import utils
 
 try:
     import llama_cpp.server.app
+    import llama_index.llms
     import uvicorn
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
@@ -26,14 +27,10 @@ class Server:
 
         level = logging.DEBUG if args.debug else logging.INFO
         logging.basicConfig(stream=sys.stdout, level=level)
-        logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
-        logging.getLogger().name = __name__
+        logging.getLogger().name = __name__ if __name__ != '__main__' else 'server'
 
-        if not args.model:
-            args.model = os.path.join(os.getcwd(), 'models', config.Config.MODEL_DEFAULT)
-        else:
-            if not os.path.exists(args.model):
-                args.model = os.path.join(os.getcwd(), 'models', args.model)
+        # Determine path to model file and if necessary download from URL
+        args.model = self.get_model(args)
 
         # Collect and filter valid field names for llama_cpp.server
         valid_field_names = set(llama_cpp.server.app.Settings.model_fields.keys())
@@ -48,6 +45,31 @@ class Server:
         uvicorn.run(
             self.app, host=self.host, port=int(self.port)
         )
+
+    @staticmethod
+    def get_model(args):
+        if os.path.exists(args.model):
+            pass
+        if os.path.exists(os.path.join(os.getcwd(), args.model)):
+            args.model = os.path.join(os.getcwd(), args.model)
+        elif os.path.exists(os.path.join(args.path, args.model)):
+            args.model = os.path.join(args.path, args.model)
+        elif os.path.exists(os.path.join(os.getcwd(), args.path, args.model)):
+            args.model = os.path.join(os.getcwd(), args.path, args.model)
+        else:
+            logging.warning(f'Model not found. Downloading from URL.')
+
+            if args.model in config.Models.MODEL_ALIASES.keys():
+                args.model = config.Models.MODEL_ALIASES[args.model]
+            if args.model in config.Models.MODELS:
+                args.model_url = config.Models.MODELS[args.model]['url']
+
+            args.model = os.path.join(args.path, utils.get_valid_filename(args.model_url))
+            model_path = os.path.join(os.getcwd(), str(args.model))
+
+            utils.download_url(model_url=args.model_url, model_path=model_path)
+
+        return args.model
 
 
 def parse_arguments():

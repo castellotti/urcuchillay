@@ -6,8 +6,12 @@
 import argparse
 import logging
 import os
+import requests
+import string
 import tempfile
+import tqdm
 import typing
+import urllib.parse
 import uuid
 
 import config
@@ -58,7 +62,7 @@ def parse_arguments_common(parser):
     parser.add_argument('--storage', '--storage_path', type=str, default=config.Config.STORAGE_PATH,
                         help='The path to save and load the vector store (default: %(default)s)')
     parser.add_argument('--model_url', type=str, default=config.Config.MODEL_URL_DEFAULT,
-                        help='Custom URL for model (defaults to the mistral-7b model)')
+                        help='Custom URL for model (defaults to the %(default)s) model)')
     parser.add_argument('--model', '--model_name', type=str, default=config.Config.MODEL_DEFAULT,
                         help='The name of the model to use (default: extracted from model url)')
     return parser
@@ -149,8 +153,59 @@ def generate_message_id():
 
 
 def create_temporary_empty_file():
-    # Create a temporary empty file and return its path
+    """Create a temporary empty file and return its path."""
     temp_file = tempfile.NamedTemporaryFile(delete=False)
     temp_file_path = temp_file.name
     temp_file.close()
     return temp_file_path
+
+
+# Source: llama_index.llms.llama_cpp.LlamaCPP._download_url
+def download_url(model_url: str, model_path: str) -> None:
+    completed = False
+    try:
+        print("Downloading url", model_url, "to path", model_path)
+        with requests.get(model_url, stream=True) as r:
+            with open(model_path, "wb") as file:
+                total_size = int(r.headers.get("Content-Length") or "0")
+                if total_size < 1000 * 1000:
+                    raise ValueError(
+                        "Content should be at least 1 MB, but is only",
+                        r.headers.get("Content-Length"),
+                        "bytes",
+                    )
+                print("total size (MB):", round(total_size / 1000 / 1000, 2))
+                chunk_size = 1024 * 1024  # 1 MB
+                for chunk in tqdm.tqdm(
+                        r.iter_content(chunk_size=chunk_size),
+                        total=int(total_size / chunk_size),
+                ):
+                    file.write(chunk)
+        completed = True
+    except Exception as e:
+        print("Error downloading model:", e)
+    finally:
+        if not completed:
+            print("Download incomplete.", "Removing partially downloaded file.")
+            os.remove(model_path)
+            raise ValueError("Download incomplete.")
+
+
+def get_valid_filename(url, default_extension='.download'):
+    """Extract a valid filename from the URL."""
+    parsed_url = urllib.parse.urlparse(url)
+    filename = os.path.basename(parsed_url.path)
+
+    # Check if the extracted filename is empty or does not contain a valid extension
+    if not filename or '.' not in filename:
+        # Use the netloc or path of the URL as the filename
+        filename = parsed_url.netloc or parsed_url.path
+        # Append the default extension
+        filename += default_extension
+
+    # Validate the filename
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    cleaned_filename = ''.join(c for c in filename if c in valid_chars)
+    cleaned_filename = cleaned_filename[:255]  # Trim to a reasonable filename length
+
+    return cleaned_filename
