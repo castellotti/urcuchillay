@@ -69,3 +69,4 @@ class ChatCompletionsRequest(BaseModel):
     presence_penalty: Optional[float] = None  # Optional, adjusts for repetition
     frequency_penalty: Optional[float] = None  # Optional, adjusts for repetitiveness
     user: Optional[str] = None  # Optional, a string representing the user making the request
+    stream: Optional[bool] = False  # Optional, If set, partial message deltas will be sent
