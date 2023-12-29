@@ -9,3 +9,10 @@ Urcuchillay was a god worshiped by Incan herders, believed to be a multicolored 
 How does Symbolikon define Urcuchillay?
 ### Response:
 Urcuchillay, in the Inca religion, was the god who watched over animals. He was said to appear as a multi-colored llama, and to care for and protect the animals of Incan herders. Urcuchillay would ensure the well-being and increasing size of their herds. He is associated with the stellar constellation Lyra.
+
+---
+
+### Input:
+What is Urcuchillay AI?
+### Response:
+A lightweight OpenAI API service bundling a local large language model (LLM) with retrieval-augmented generation (RAG) and hardware acceleration for Apple and NVIDIA GPUs.
