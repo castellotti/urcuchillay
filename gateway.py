@@ -139,36 +139,57 @@ async def create_chat_completions(request_data: schemas.openai.ChatCompletionsRe
     message_id = utils.generate_message_id()
     created = int(time.time())
 
-    # Use generator to handle streaming response
-    def generate_responses():
-        if last_user_message.role == schemas.openai.MessageRole.USER:
-            logging.info(f"User prompt: {last_user_message.content}")
-            streaming_response = gateway.engine.stream_chat(last_user_message.content)
-            tokens = list(streaming_response.response_gen)  # Convert generator to list
-
-            for i, token in enumerate(tokens):
-                finish_reason = None if i < len(tokens) - 1 else "stop"
-
-                choice = {
-                    "delta": {
-                        "content": f"{token}",
-                    },
+    if not request_data.stream:
+        content = gateway.engine.chat(last_user_message.content)
+        response = {
+            "id": message_id,
+            "object": "chat.completion",
+            "created": created,
+            "model": request_data.model,
+            "choices": [
+                {
                     "index": 0,
-                    "finish_reason": finish_reason,
+                    "message": {
+                        "role": "assistant",
+                        "content": content.response,
+                    },
+                    "finish_reason": "stop"
                 }
+            ]
+        }
+        return response
 
-                # Format the chunk as in the OpenAI API response
-                chunk_data = {
-                    'id': message_id,
-                    'model': request_data.model,
-                    'created': created,
-                    'object': 'chat.completion.chunk',
-                    'choices': [choice],
-                }
-                chunk = f"data: {json.dumps(chunk_data)}\n\n"
-                yield chunk
+    else:
+        # Use generator to handle streaming response
+        def generate_responses():
+            if last_user_message.role == schemas.openai.MessageRole.USER:
+                logging.info(f"User prompt: {last_user_message.content}")
+                streaming_response = gateway.engine.stream_chat(last_user_message.content)
+                tokens = list(streaming_response.response_gen)  # Convert generator to list
 
-    return schemas.openai.CustomStreamingResponse(generate_responses())
+                for i, token in enumerate(tokens):
+                    finish_reason = None if i < len(tokens) - 1 else "stop"
+
+                    choice = {
+                        "delta": {
+                            "content": f"{token}",
+                        },
+                        "index": 0,
+                        "finish_reason": finish_reason,
+                    }
+
+                    # Format the chunk as in the OpenAI API response
+                    chunk_data = {
+                        'id': message_id,
+                        'model': request_data.model,
+                        'created': created,
+                        'object': 'chat.completion.chunk',
+                        'choices': [choice],
+                    }
+                    chunk = f"data: {json.dumps(chunk_data)}\n\n"
+                    yield chunk
+
+        return schemas.openai.CustomStreamingResponse(generate_responses())
 
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"])
