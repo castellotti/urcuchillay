@@ -20,7 +20,7 @@ except ModuleNotFoundError as e:
     sys.exit(1)
 
 
-DEFAULT_PROMPT = 'What is Urcuchillay?'
+DEFAULT_PROMPT = 'What is Urcuchillay AI?'
 
 
 class Prompt(client.Client):
