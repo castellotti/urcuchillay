@@ -177,7 +177,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     Started server process [#]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 ```
 - To save startup time, the ```index.py``` command can be used to create and save the vector store locally, and ```gateway.py``` can access this local cache using the ```--load``` argument:
 ```shell
