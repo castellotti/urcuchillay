@@ -7,9 +7,8 @@ import argparse
 import logging
 import sys
 
-import utils
-
 try:
+    import utils
     import llama_cpp.server.app
     import llama_index.llms
     import uvicorn
