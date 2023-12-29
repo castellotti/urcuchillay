@@ -20,7 +20,7 @@ pyenv activate urcuchillay-env
 
 #### Recommended: Install latest releases
 ```
-pip install llama_cpp_python llama_index transformers torch
+pip install 'llama-cpp-python[server]' llama_index transformers torch pypdf Pillow
 ```
 
 #### Alternative: Install known-working versions
