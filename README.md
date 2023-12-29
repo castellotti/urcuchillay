@@ -10,9 +10,12 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 
 ## Features
 
-- [OpenAI API](https://platform.openai.com/docs/api-reference)
+![User Interface](docs/images/urcuchillay-chatbot_ui-compact.png)
+
+- [OpenAI API](https://platform.openai.com/docs/api-reference) support
 - Local large language models ([LLMs](https://en.wikipedia.org/wiki/Large_language_model))
 - Retrieval-augmented generation ([RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation))
+- Web-based chat interface in the style of ChatGPT via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui)
 - GPU acceleration
   - Apple Metal
   - NVIDIA CUDA
@@ -39,23 +42,11 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
     - [Server](#server)
     - [Index](#index)
     - [Gateway](#gateway)
-  - [Endpoint Tests](#endpoint-tests)
-    - [Models](#models-1)
-      - [Server](#server-1)
-      - [Gateway](#gateway-1)
-    - [Text Completion](#text-completion)
-      - [Server](#server-2)
-      - [Gateway](#gateway-2)
-    - [Chat](#chat)
-      - [Server](#server-3)
-      - [Gateway](#gateway-3)
-    - [Chat Streaming](#chat-streaming)
-      - [Server](#server-4)
-      - [Gateway](#gateway-4)
-
+  - [User Interface](#user-interface)
+- [Testing](#testing)
+  - [Endpoints](#endpoints)
 
 ## Software
-
 - [gateway.py](gateway.py): The core API service, merging a local LLM with RAG functionality via [LlamaIndex](https://www.llamaindex.ai) while conforming to OpenAI API [chat](https://platform.openai.com/docs/api-reference/chat) and [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints. All other endpoints are proxied through without modification to the local LLM server.
 - [server.py](server.py): An embedded [Llama.cpp](https://github.com/ggerganov/llama.cpp/) service with [Python bindings](https://github.com/abetlen/llama-cpp-python) providing [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible access to your local LLM.
 - [index.py](index.py): A command-line tool to create and manage the vector store for retrieval-augmented generation (RAG).
@@ -197,211 +188,24 @@ INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
 ./gateway.py --help
 ```
 
-## Endpoint Tests
-- Test scripts and other utilities can be found in the ```scripts``` directory.
-- In the following examples the ```server.py``` and ```gateway.py``` services are running on their default ports:
-  - ```server.py```: **8000**
-  - ```gateway.py```: **8080**
-- Results for ```server.py``` will only include the information on which the original model has been trained by the provider.
-- Results for ```gateway.py``` will include RAG results from the vector store generated automatically at startup or previously created and saved by ```index.py```.
+## User Interface
 
-### Models
-#### Server
+![User Interface](docs/images/urcuchillay-chatbot_ui.png)
+
+A web-based user interface in the style of ChatGPT is available via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui).
+
+Installation instructions are available through the [Chatbot UI GitHub repository](https://github.com/mckaywrigley/chatbot-ui#chatbot-ui), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the ```server.py``` and ```gateway.py``` services are running:
 ```shell
-./scripts/test-models.sh 8000
-```
-```json
-{
-  "object": "list",
-  "data": [
-    {
-      "id": "mistral-7b-instruct-v0.1.Q4_K_M.gguf",
-      "object": "model",
-      "owned_by": "me",
-      "permissions": []
-    }
-  ]
-}%
-```
-#### Gateway
-```shell
-./scripts/test-models.sh 8080
-```
-```json
-{
-  "object": "list",
-  "data": [
-    {
-      "id": "mistral-7b-instruct-v0.1.Q4_K_M.gguf",
-      "object": "model",
-      "owned_by": "me",
-      "permissions": []
-    }
-  ]
-}%
+docker run \
+        --add-host=host.docker.internal:host-gateway \
+        -e OPENAI_API_HOST=http://host.docker.internal:8080 \
+	-e OPENAI_API_KEY=xxxxxxxx \
+        -p 3000:3000 \
+        ghcr.io/mckaywrigley/chatbot-ui:main
 ```
 
-### Text Completion
-#### Server
-```shell
-./scripts/test-prompt.sh 8000
-```
-```json
-{
-  "id": "cmpl-5237496e-00dd-445d-93b8-8b4574315464",
-  "object": "text_completion",
-  "created": 1703827990,
-  "model": "text-davinci-003",
-  "choices": [
-    {
-      "text": "\nAnswer: I am not aware of any specific entity called \"Urcuchillay AI\". Could you please provide more context or details about this topic?",
-      "index": 0,
-      "logprobs": null,
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 10,
-    "completion_tokens": 33,
-    "total_tokens": 43
-  }
-}%
-```
-#### Gateway
-```shell
-./scripts/test-prompt.sh 8080
-```
-```json
-{
-  "id": "cmpl-54a90e1a-5b03-406f-8cf4-a1367f6f08d1",
-  "object": "text_completion",
-  "created": 1703828070,
-  "model": "text-davinci-003",
-  "choices": [
-    {
-      "text": "\nUrcuchillay AI is a local large language model (LLM) that utilizes retrieval-augmented generation (RAG) to provide responses. It can be accelerated using Apple and NVIDIA GPUs for better performance.",
-      "index": 0,
-      "finish_reason": "length"
-    }
-  ]
-}%
-```
+# Testing
+Test scripts and other utilities can be found in the [scripts](scripts) directory.
 
-### Chat
-#### Server
-```shell
-./scripts/test-prompt-chat.sh 8000
-```
-```json
-{
-  "id": "chatcmpl-94442f30-d0a9-4091-af65-b0e02981b8f6",
-  "object": "chat.completion",
-  "created": 1703828618,
-  "model": "gpt-3.5-turbo",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "content": "I'm not aware of a specific AI system or model named \"Urcuchillay AI.\" It is possible that you may be referring to a custom-built AI or an internal project with that name, which I wouldn't have information about. However, Urcuchillay is a deity in Andean mythology, often depicted as a rainbow-colored llama or alpaca, known for its ability to change its color and shape. If you can provide more context or clarify what you're looking for, I would be happy to try and help with your question!",
-        "role": "assistant"
-      },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 33,
-    "completion_tokens": 124,
-    "total_tokens": 157
-  }
-}%
-```
-#### Gateway
-```shell
-./scripts/test-prompt-chat.sh 8080
-```
-```json
-{
-  "id": "cmpl-572964a9-4457-4da8-8530-d3f51676b9af",
-  "object": "chat.completion",
-  "created": 1703830758,
-  "model": "gpt-3.5-turbo",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "\nUrcuchillay AI is a lightweight OpenAI API service bundling a local large language model (LLM) with retrieval-augmented generation (RAG) and hardware acceleration for Apple and NVIDIA GPUs."
-      },
-      "finish_reason": "stop"
-    }
-  ]
-}%
-```
-
-### Chat Streaming
-#### Server
-```shell
-./scripts/test-prompt-chat-stream.sh 8000
-```
-```
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"role": "assistant"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " I"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " couldn"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": "'"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": "t"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " find"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " any"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " specific"}, "finish_reason": null}]}
-
-data: {"id": "chatcmpl-fb249baa-83bf-4cef-bfc1-47723d6a202b", "model": "gpt-3.5-turbo", "created": 1703830918, "object": "chat.completion.chunk", "choices": [{"index": 0, "delta": {"content": " information"}, "finish_reason": null}]}
-...
-etc.
-...
-data: [DONE]
-```
-#### Gateway
-```shell
-./scripts/test-prompt-chat-stream.sh 8080
-```
-```
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "\n"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "U"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "rc"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "uch"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "ill"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "ay"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " AI"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " is"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " an"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " advanced"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " language"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " model"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " that"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": " comb"}, "index": 0, "finish_reason": null}]}
-
-data: {"id": "cmpl-41fdc520-b946-49ef-b49d-8930cc0a0dc5", "model": "gpt-3.5-turbo", "created": 1703829030, "object": "chat.completion.chunk", "choices": [{"delta": {"content": "ines"}, "index": 0, "finish_reason": null}]}
-...
-etc.
-...
-data: [DONE]
-```
+## Endpoints
+- For examples and instructions, please see [Testing Endpoints](docs/testing-endpoints.md).
