@@ -32,11 +32,11 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 ```shell
 curl -L setup.urcuchillay.ai | sh
 ```
-2. Open new Terminal, activate environment, start server:
+2. Open new Terminal, activate environment, start [server](#server):
 ```shell
 pyenv activate urcuchillay-env ; cd urcuchillay ; ./server.py
 ```
-3. Open new Terminal, activate environment, start gateway on network:
+3. Open new Terminal, activate environment, start [gateway](#gateway) on network:
 ```shell
 pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py --host 0.0.0.0
 ```
