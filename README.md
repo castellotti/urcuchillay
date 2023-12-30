@@ -4,7 +4,7 @@
 
 A lightweight [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible service bundling a local [LLM](https://en.wikipedia.org/wiki/Large_language_model) with [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation) and hardware acceleration for Apple and NVIDIA GPUs.
 
-![Urcuchillay](docs/images/urcuchillay-header.png)
+![Urcuchillay](docs/images/urcuchillay-header.webp)
 
 In the Incan religion, Urcuchillay was depicted as a multicolored male llama, worshipped by Incan herders for his role in protecting and increasing the size of their herds.
 
@@ -34,7 +34,7 @@ curl -L setup.urcuchillay.ai | sh
 ```shell
 pyenv activate urcuchillay-env ; cd urcuchillay ; ./server.py
 ```
-3. Open new Ternminal, activate environemt, start gateway:
+3. Open new Terminal, activate environment, start gateway:
 ```shell
 pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py
 ```
@@ -48,8 +48,7 @@ docker run \
         ghcr.io/mckaywrigley/chatbot-ui:main
 ```
 5. Open Web Chat UI in a browser:
-
-[http://localhost:3000](http://localhost:3000)
+- [http://localhost:3000](http://localhost:3000)
 
 # Table of Contents
 - [Urcuchillay](#urcuchillay)
