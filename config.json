@@ -1,7 +1,9 @@
 {
   "Config": {
     "DEBUG": false,
-    "MODEL_DEFAULT": "mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+    "MODEL_DEFAULT": "mistral-7b-instruct-v0.1.Q4_K_M.gguf",
+    "GATEWAY_HOST": "127.0.0.1",
+    "GATEWAY_PORT": "8080"
   },
   "APIConfig": {
     "API_HOST": "127.0.0.1",
