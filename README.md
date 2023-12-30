@@ -4,7 +4,9 @@
 
 A lightweight [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible service bundling a local [LLM](https://en.wikipedia.org/wiki/Large_language_model) with [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation) and hardware acceleration for Apple and NVIDIA GPUs.
 
-![Urcuchillay](docs/images/urcuchillay-header.webp)
+<div style="text-align:center;">
+  <img src="docs/images/urcuchillay-header.webp" alt="Urcuchillay" width="480"/>
+</div>
 
 In the Incan religion, Urcuchillay was depicted as a multicolored male llama, worshipped by Incan herders for his role in protecting and increasing the size of their herds.
 
