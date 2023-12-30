@@ -3,11 +3,11 @@
     "DEBUG": false,
     "MODEL_DEFAULT": "mistral-7b-instruct-v0.1.Q4_K_M.gguf",
     "GATEWAY_HOST": "127.0.0.1",
-    "GATEWAY_PORT": "8080"
+    "GATEWAY_PORT": 8080
   },
   "APIConfig": {
     "API_HOST": "127.0.0.1",
-    "API_PORT": "8000",
+    "API_PORT": 8000,
     "OPENAI_API_KEY": "xxxxxxxx"
   }
 }
