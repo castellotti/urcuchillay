@@ -38,6 +38,10 @@ def parse_arguments_common(parser):
                         help=f'Hostname or IP address of API service (default: %(default)s)')
     parser.add_argument('--api_port', '--openai_port', type=str, default=config.APIConfig.API_PORT,
                         help=f'Port for API service (default: %(default)s)')
+    parser.add_argument('--ui_host', type=str, default=config.Config.UI_HOST,
+                        help=f'Hostname or IP address of web chat user interface (default: %(default)s)')
+    parser.add_argument('--ui_port', type=str, default=config.Config.UI_PORT,
+                        help=f'Port for web chat user interface (default: %(default)s)')
     parser.add_argument('--cpu', action='store_const', const=0,
                         help='Use the CPU only instead of GPU acceleration')
     parser.add_argument('--gpus', '--enable_gpus', '--n_gpu_layers', action='store_const',

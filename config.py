@@ -9,7 +9,6 @@ import os
 import sys
 
 try:
-    import llama_cpp.server.app
     import llama_index.chat_engine.types
     import llama_index.constants
 except ModuleNotFoundError as e:
@@ -96,6 +95,9 @@ class Config:
 
     GATEWAY_HOST = 'localhost'
     GATEWAY_PORT = 8080
+
+    UI_HOST = 'localhost'
+    UI_PORT = 3000
 
     ENABLE_GPUS = 1  # One or more GPU layers will enable hardware acceleration (1 is correct for Apple Silicon)
     TEMPERATURE = llama_index.constants.DEFAULT_TEMPERATURE  # 0.1
