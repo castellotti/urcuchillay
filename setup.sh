@@ -8,6 +8,22 @@ set -e
 
 echo "Preparing to install Urcuchillay."
 
+# Variable for storing information to output at the end of installation
+output_message=""
+
+# Function to prompt for user confirmation
+confirm() {
+    while true; do
+        printf '%s [y/N]: ' "$1"
+        read -r yn </dev/tty
+        case $yn in
+            [Yy]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+}
+
 # Function to check if inside a git repository by looking for .git directory
 is_in_git_repo() {
     dir=$(pwd)
@@ -53,6 +69,33 @@ case "$OS" in
         fi
         echo "Installing dependencies using Homebrew..."
         (brew install pyenv pyenv-virtualenv) < /dev/null
+
+        # Check if Docker is installed
+        if ! command -v docker >/dev/null 2>&1; then
+            echo # newline for better visibility
+            echo "Docker is not installed."
+            echo "Docker is recommended for using the web chat user interface."
+
+            # Ask user for permission to install Docker
+            if confirm "Do you want to install Docker?"; then
+                echo "Installing Docker..."
+
+                # Install Docker using Homebrew
+                (brew install --cask docker) < /dev/null
+
+                echo "Docker has been installed."
+                if [ -n "$output_message" ]; then
+                    output_message="${output_message}\n"
+                fi
+                output_message="${output_message}  Docker was installed.\n"
+                output_message="${output_message}  In order to use docker it will be necessary to run Docker Desktop.\n"
+                output_message="${output_message}  Docker Desktop can found in the Launchpad menu listed as \"Docker\"\n"
+            else
+                echo "Installation cancelled."
+            fi
+        else
+            echo "Docker is already installed."
+        fi
         ;;
 
     Linux)
@@ -70,10 +113,11 @@ case "$OS" in
             packages="make build-essential libssl-dev zlib1g-dev libbz2-dev \
                       libreadline-dev libsqlite3-dev wget curl llvm \
                       libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
-                      libffi-dev liblzma-dev"
+                      libffi-dev liblzma-dev docker.io"
 
             # Collect missing prerequisites
             install_required=false
+            docker_install_required=false
             is_installed() {
                 dpkg -l "$1" > /dev/null 2>&1
                 return $?
@@ -82,6 +126,9 @@ case "$OS" in
                 if ! is_installed "$pkg"; then
                     install_required=true
                     echo "$pkg is not installed."
+                    if [ "$pkg" = "docker.io" ]; then
+                        docker_install_required=true
+                    fi
                 fi
             done
 
@@ -95,15 +142,30 @@ case "$OS" in
                 echo "All dependencies are already installed."
             fi
 
+            # Grant Docker permission to user if docker.io is being installed
+            if [ "$docker_install_required" = true ]; then
+                sudo usermod -aG docker "$(whoami)"
+                echo # newline for better visibility
+                echo "Docker user permissions set for $(whoami)."
+                echo # newline for better visibility
+                if [ -n "$output_message" ]; then
+                    output_message="${output_message}\n"
+                fi
+                output_message="${output_message}  Docker was installed.\n"
+                output_message="${output_message}  It may be necessary to run the following before using docker:\n"
+                output_message="${output_message}  newgrp docker\n"
+            fi
+
         elif [ "$ID" = "fedora" ]; then
             echo "Fedora detected."
             # List of prerequisite packages
             packages="zlib-devel bzip2 bzip2-devel readline-devel \
                       sqlite sqlite-devel openssl-devel xz xz-devel \
-                      libffi-devel findutils gcc-c++"
+                      libffi-devel findutils gcc-c++ docker"
 
             # Collect missing prerequisites
             to_install=""
+            docker_install_required=false
             is_installed() {
                 dnf list installed "$1" > /dev/null 2>&1
                 return $?
@@ -111,6 +173,9 @@ case "$OS" in
             for pkg in $packages; do
                 if ! is_installed "$pkg"; then
                     to_install="$to_install $pkg"
+                    if [ "$pkg" = "docker" ]; then
+                        docker_install_required=true
+                    fi
                 fi
             done
             to_install=$(echo "$to_install" | sed 's/^ //')
@@ -123,6 +188,23 @@ case "$OS" in
             else
                 echo "All dependencies are already installed."
             fi
+
+            # Grant Docker permission to user if docker is being installed
+            if [ "$docker_install_required" = true ]; then
+                sudo usermod -aG docker "$(whoami)"
+                echo # newline for better visibility
+                echo "Docker user permissions set for $(whoami)."
+                echo # newline for better visibility
+                if [ -n "$output_message" ]; then
+                    output_message="${output_message}\n"
+                fi
+                output_message="${output_message}  Docker was installed.\n"
+                output_message="${output_message}  It may be necessary to run the following before using docker:\n"
+                output_message="${output_message}  sudo systemctl start docker\n"
+                output_message="${output_message}  sudo systemctl enable docker\n"
+                output_message="${output_message}  newgrp docker\n"
+            fi
+
         else
             echo "Warning: Unknown distribution detected. Dependencies may be missing."
         fi
@@ -242,6 +324,12 @@ python -c "import llama_cpp; print(llama_cpp.__version__)"
 printf "Verifying llama_index version: "
 python -c "import llama_index; print(llama_index.__version__)"
 
-echo # newline
+if [ -n "$output_message" ]; then
+    echo # newline for better visibility
+    echo "Installation Notes:"
+    printf "%b" "$output_message"
+fi
+
+echo # newline for better visibility
 echo "To use Urcuchillay, please start a new terminal and run:"
 echo "pyenv activate urcuchillay-env"
