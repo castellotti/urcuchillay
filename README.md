@@ -36,11 +36,11 @@ curl -L setup.urcuchillay.ai | sh
 ```shell
 pyenv activate urcuchillay-env ; cd urcuchillay ; ./server.py
 ```
-3. Open new Terminal, activate environment, start gateway:
+3. Open new Terminal, activate environment, start gateway on network:
 ```shell
-pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py
+pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py --host 0.0.0.0
 ```
-4. Start Web Chat UI (requires Docker):
+4. Start Web Chat UI (requires [Docker](https://docs.docker.com/get-docker/)):
 ```shell
 docker run \
         --add-host=host.docker.internal:host-gateway \
@@ -70,7 +70,7 @@ docker run \
     - [Server](#server)
     - [Index](#index)
     - [Gateway](#gateway)
-  - [User Interface](#user-interface)
+  - [Web Chat User Interface](#web-chat-user-interface)
 - [Testing](#testing)
   - [Endpoints](#endpoints)
 
@@ -86,6 +86,7 @@ docker run \
 ### macOS
 
 - [Homebrew](https://brew.sh) is used to install software dependencies.
+- [Docker](https://docs.docker.com/get-docker/) is recommended for the interactive chat web interface
 
 ### Linux
 
@@ -211,12 +212,16 @@ INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 ```shell
 ./gateway --load
 ```
+- To host the service on the network for access via web chat user interface within a Docker container:
+```shell
+./gateway --gateway_host 0.0.0.0
+```
 - For additional options please check usage:
 ```shell
 ./gateway.py --help
 ```
 
-## User Interface
+## Web Chat User Interface
 
 ![User Interface](docs/images/urcuchillay-chatbot_ui.png)
 
