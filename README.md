@@ -25,9 +25,36 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
   - [llama-cpp-python](https://github.com/abetlen/llama-cpp-python)
   - [LlamaIndex](https://www.llamaindex.ai)
 
+## Quickstart Guide
+1. Install Urcuchillay: 
+```shell
+curl -L setup.urcuchillay.ai | sh
+```
+2. Open new Terminal, activate environment, start server:
+```shell
+pyenv activate urcuchillay-env ; cd urcuchillay ; ./server.py
+```
+3. Open new Ternminal, activate environemt, start gateway:
+```shell
+pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py
+```
+4. Start Web Chat UI (requires Docker):
+```shell
+docker run \
+        --add-host=host.docker.internal:host-gateway \
+        -e OPENAI_API_HOST=http://host.docker.internal:8080 \
+        -e OPENAI_API_KEY=xxxxxxxx \
+        -p 3000:3000 \
+        ghcr.io/mckaywrigley/chatbot-ui:main
+```
+5. Open Web Chat UI in a browser:
+
+[http://localhost:3000](http://localhost:3000)
+
 # Table of Contents
 - [Urcuchillay](#urcuchillay)
   - [Features](#features)
+  - [Quickstart Guide](#quickstart-guide)
 - [Table of Contents](#table-of-contents)
   - [Software](#software)
   - [Prerequisites](#prerequisites)
@@ -171,7 +198,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 - The ```gateway.py``` service operates similarly to the ```server.py``` process but will include RAG support via LlamaIndex for any calls to the [chat](https://platform.openai.com/docs/api-reference/chat) or [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints.
 - The service will scan files in the ```data``` directory at startup and create a vector store for RAG support.
 - By default ```gateway.py``` will listen on **localhost** port **8080** and will communicate with ```server.py``` on port **8000**.
-- The default host and port for the ```gateway.py``` service can be set using the ```--gateway_host``` and ```--gateway_port``` arguments.
+- The host and port for the ```gateway.py``` service can be set using the ```--gateway_host``` and ```--gateway_port``` arguments.
 ```shell
 ./gateway.py
 INFO:     Started server process [#]
@@ -199,7 +226,7 @@ Installation instructions are available through the [Chatbot UI GitHub repositor
 docker run \
         --add-host=host.docker.internal:host-gateway \
         -e OPENAI_API_HOST=http://host.docker.internal:8080 \
-	-e OPENAI_API_KEY=xxxxxxxx \
+        -e OPENAI_API_KEY=xxxxxxxx \
         -p 3000:3000 \
         ghcr.io/mckaywrigley/chatbot-ui:main
 ```
