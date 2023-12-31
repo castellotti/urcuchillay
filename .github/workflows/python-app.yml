@@ -8,6 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Troubleshoot versions
+        run: |
+          python --version
+          pip --version
+          pip list
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v3
