@@ -34,20 +34,15 @@ curl -L setup.urcuchillay.ai | sh
 ```
 2. Open new Terminal, activate environment, start [server](#server):
 ```shell
-pyenv activate urcuchillay-env ; cd urcuchillay ; ./server.py
+pyenv activate urcuchillay-env && cd urcuchillay ; ./server.py
 ```
 3. Open new Terminal, activate environment, start [gateway](#gateway) on network:
 ```shell
-pyenv activate urcuchillay-env ; cd urcuchillay ; ./gateway.py --host 0.0.0.0
+pyenv activate urcuchillay-env && cd urcuchillay ; ./gateway.py --host 0.0.0.0
 ```
 4. Start Web Chat UI (requires [Docker](https://docs.docker.com/get-docker/)):
 ```shell
-docker run \
-        --add-host=host.docker.internal:host-gateway \
-        -e OPENAI_API_HOST=http://host.docker.internal:8080 \
-        -e OPENAI_API_KEY=xxxxxxxx \
-        -p 3000:3000 \
-        ghcr.io/mckaywrigley/chatbot-ui:main
+pyenv activate urcuchillay-env && cd urcuchillay ; ./scripts/docker-chat-web.sh
 ```
 5. Open Web Chat UI in a browser:
 - [http://localhost:3000](http://localhost:3000)
@@ -229,12 +224,7 @@ A web-based user interface in the style of ChatGPT is available via [Chatbot UI]
 
 Installation instructions are available through the [Chatbot UI GitHub repository](https://github.com/mckaywrigley/chatbot-ui#chatbot-ui), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the ```server.py``` and ```gateway.py``` services are running:
 ```shell
-docker run \
-        --add-host=host.docker.internal:host-gateway \
-        -e OPENAI_API_HOST=http://host.docker.internal:8080 \
-        -e OPENAI_API_KEY=xxxxxxxx \
-        -p 3000:3000 \
-        ghcr.io/mckaywrigley/chatbot-ui:main
+./scripts/docker-chat-web.sh
 ```
 
 # Testing
