@@ -38,7 +38,7 @@ class Client:
 
     def get_llm(self, args):
         return llama_index.llms.OpenAI(
-            model="text-davinci-002",
+            model="text-davinci-003",
             temperature=args.temperature,
             max_tokens=args.max_new_tokens,
             api_base=config.APIConfig.get_openai_api_base(host=args.api_host, port=args.api_port),
