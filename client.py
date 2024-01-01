@@ -40,7 +40,7 @@ class Client:
         return llama_index.llms.OpenAI(
             model="text-davinci-003",
             temperature=args.temperature,
-            max_tokens=args.max_new_tokens,
+            max_tokens=args.context,
             api_base=config.APIConfig.get_openai_api_base(host=args.api_host, port=args.api_port),
             api_key=config.APIConfig.OPENAI_API_KEY,
             api_version=config.APIConfig.OPENAI_API_VERSION,
