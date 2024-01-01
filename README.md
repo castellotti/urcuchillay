@@ -184,7 +184,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 - By default files in the ```data``` directory will be processed and the local vector store will be placed in a directory called ```storage```. These locations can be set using the ```--data``` and ```--storage``` arguments respectively.
 - The following command will delete any existing local vector store and create a new one from files found in the ```data``` directory:
 ```shell
-./index --reset
+./index.py --reset
 ```
 - For additional options please check usage:
 ```shell
@@ -205,11 +205,11 @@ INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 ```
 - To save startup time, the ```index.py``` command can be used to create and save the vector store locally, and ```gateway.py``` can access this local cache using the ```--load``` argument:
 ```shell
-./gateway --load
+./gateway.py --load
 ```
 - To host the service on the network for access via web chat user interface within a Docker container:
 ```shell
-./gateway --gateway_host 0.0.0.0
+./gateway.py --gateway_host 0.0.0.0
 ```
 - For additional options please check usage:
 ```shell
