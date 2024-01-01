@@ -6,9 +6,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./data:/usr/src/app/data
-      - ./storage:/usr/src/app/storage
-      - ./config.json:/usr/src/app/config.json
+      - ./data:/app/data
+      - ./storage:/app/storage
+      - ./config.json:/app/config.json
     command: --host 0.0.0.0 --api_host host.docker.internal --level INFO
 
   chatbot-ui:
