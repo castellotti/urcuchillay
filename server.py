@@ -10,7 +10,6 @@ import sys
 try:
     import utils
     import llama_cpp.server.app
-    import llama_index.llms
     import uvicorn
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
