@@ -25,11 +25,12 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(args.level, 'DEBUG')
 
     def test_update_arguments_common(self):
-        args = parse_arguments()
-        self.assertEqual(args.model, 'mistral-7b-instruct-v0.1.Q4_K_M.gguf')
-        args.model = 'mixtral'
-        update_arguments_common(args)
-        self.assertEqual(args.model, 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf')
+        with unittest.mock.patch.object(sys, 'argv', ['test_utils.py', '--model', 'mixtral']):
+            args = parse_arguments()
+            self.assertEqual(args.model, 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf')
+            args.model = 'mistral'
+            update_arguments_common(args)
+            self.assertEqual(args.model, 'mistral-7b-instruct-v0.1.Q4_K_M.gguf')
 
     def test_str2bool(self):
         self.assertTrue(str2bool('True'))
