@@ -232,3 +232,10 @@ Test scripts and other utilities can be found in the [scripts](scripts) director
 
 ## Endpoints
 - For examples and instructions, please see [Testing Endpoints](docs/testing-endpoints.md).
+
+## Unit tests
+- Unit tests can be run from the main directory from within the virtual python environment:
+```shell
+pyenv activate urcuchillay-env
+python -m unittest discover tests
+```
