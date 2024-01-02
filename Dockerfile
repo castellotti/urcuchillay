@@ -1,3 +1,7 @@
+# Copyright (c) 2023 Steve Castellotti
+# This file is part of Urcuchillay and is released under the MIT License.
+# See LICENSE file in the project root for full license information.
+
 # Base
 FROM python:3.11.6
 WORKDIR /app
