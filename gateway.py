@@ -11,9 +11,9 @@ import time
 import client
 import config
 import schemas.openai
-import utils
 
 try:
+    import utils
     import fastapi
     import httpx
     import uvicorn
