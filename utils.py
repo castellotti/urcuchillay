@@ -44,10 +44,9 @@ def parse_arguments_common(parser):
                         help=f'Port for web chat user interface (default: %(default)s)')
     parser.add_argument('--cpu', action='store_const', const=0,
                         help='Use the CPU only instead of GPU acceleration')
-    parser.add_argument('--gpus', '--enable_gpus', '--n_gpu_layers', action='store_const',
-                        const=config.Config.ENABLE_GPUS,
+    parser.add_argument('--gpus', '--enable_gpus', '--n_gpu_layers', '--n-gpu-layers', type=int,
                         default=config.Config.ENABLE_GPUS,
-                        help='One or more GPU layers will enable hardware acceleration (default: %(default)s)')
+                        help='Number of GPU layers to enable hardware acceleration (default: %(default)s)')
     parser.add_argument('--temperature', type=float, default=config.Config.TEMPERATURE,
                         help='The temperature value for the model (default: %(default)s)')
     parser.add_argument('--context', '--context_window', type=float, default=config.Config.CONTEXT_WINDOW,
