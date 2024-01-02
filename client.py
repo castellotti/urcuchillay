@@ -7,9 +7,9 @@ import os
 import sys
 
 import config
-import utils
 
 try:
+    import utils
     import llama_index
     import transformers
 except ModuleNotFoundError as e:
@@ -44,6 +44,8 @@ class Client:
             api_base=config.APIConfig.get_openai_api_base(host=args.api_host, port=args.api_port),
             api_key=config.APIConfig.OPENAI_API_KEY,
             api_version=config.APIConfig.OPENAI_API_VERSION,
+            max_retries=args.max_retries,
+            timeout=args.timeout,
             callback_manager=self.callback_manager,
         )
 
@@ -68,15 +70,21 @@ class Client:
 
     @staticmethod
     def get_index(service_context, args):
-        if not os.path.exists(args.data) or not os.listdir(args.data):
-            # Create a temporary empty file for the index if a missing or empty data directory was supplied
-            temp_file = utils.create_temporary_empty_file()
-            documents = llama_index.SimpleDirectoryReader(input_files=[temp_file]).load_data()
-            index = llama_index.VectorStoreIndex.from_documents(documents, service_context=service_context)
-            os.remove(temp_file)
-            return index
+        if args.load and all(os.path.exists(os.path.join(args.storage, filename))
+                             for filename in config.Config.STORAGE_FILES):
+            # load vector index from storage
+            storage_context = llama_index.StorageContext.from_defaults(persist_dir=args.storage)
+            return llama_index.load_index_from_storage(storage_context, service_context=service_context)
         else:
-            documents = llama_index.SimpleDirectoryReader(args.data).load_data()
-            return llama_index.VectorStoreIndex.from_documents(
-                documents, service_context=service_context
-            )
+            if not os.path.exists(args.data) or not os.listdir(args.data):
+                # Create a temporary empty file for the index if a missing or empty data directory was supplied
+                temp_file = utils.create_temporary_empty_file()
+                documents = llama_index.SimpleDirectoryReader(input_files=[temp_file]).load_data()
+                index = llama_index.VectorStoreIndex.from_documents(documents, service_context=service_context)
+                os.remove(temp_file)
+                return index
+            else:
+                documents = llama_index.SimpleDirectoryReader(args.data).load_data()
+                return llama_index.VectorStoreIndex.from_documents(
+                    documents, service_context=service_context
+                )
