@@ -103,6 +103,12 @@ case "$OS" in
         PYENV_VERSION=3.11.3
         echo "Running on Linux."
 
+        # Check for NVIDIA CUDA support
+        if command -v nvidia-smi >/dev/null 2>&1; then
+            echo "NVIDIA CUDA support detected."
+            export CMAKE_ARGS="-DLLAMA_CUBLAS=ON"
+        fi
+
         # Extract the ID value from /etc/os-release
         ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 
