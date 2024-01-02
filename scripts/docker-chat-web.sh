@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (c) 2023 Steve Castellotti
+# This file is part of Urcuchillay and is released under the MIT License.
+# See LICENSE file in the project root for full license information.
 
 # Check if the script is running in the 'urcuchillay-env' virtual environment
 if [ "$(pyenv version-name)" != "urcuchillay-env" ]; then
@@ -46,5 +49,6 @@ docker run \
     --add-host=host.docker.internal:host-gateway \
     -e OPENAI_API_HOST="http://host.docker.internal:$GATEWAY_PORT" \
     -e OPENAI_API_KEY="$OPENAI_API_KEY" \
+  	-v ./config.json:/usr/src/app/config.json \
     -p "$UI_PORT":"$UI_PORT" \
     ghcr.io/mckaywrigley/chatbot-ui:main
