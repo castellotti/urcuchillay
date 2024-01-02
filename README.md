@@ -28,21 +28,34 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
   - [LlamaIndex](https://www.llamaindex.ai)
 
 ## Quickstart Guide
+### Linux with CUDA using NVIDIA Container Toolkit
+1. Launch Docker Compose via script (please set at least one GPU layer for acceleration):
+- **Note**: Files placed in the ```data``` directory will be used to create the RAG vector store.
+```shell
+git clone https://github.com/castellotti/urcuchillay.git
+cd urcuchillay
+./scripts/docker-compose.sh --n-gpu-layers 30
+```
+2. Open Web Chat UI in a browser:
+- [http://localhost:3000](http://localhost:3000)
+
+### macOS
+- **Note** The LLM [server](#server) and RAG [index](#index) applications must run natively on macOS in order to access the GPU through [Metal](https://developer.apple.com/metal/). It not currently possible to access Metal from inside a Docker container. 
 1. Install Urcuchillay: 
 ```shell
 curl -L setup.urcuchillay.ai | sh
 ```
-2. Open new Terminal, activate environment, start [server](#server):
+2. Open new Terminal, activate environment, and start [server](#server) on the network:
 ```shell
-pyenv activate urcuchillay-env && cd urcuchillay ; ./server.py
+pyenv activate urcuchillay-env && cd urcuchillay ; ./server.py --host 0.0.0.0
 ```
-3. Open new Terminal, activate environment, start [gateway](#gateway) on network:
+3. Open new Terminal, activate environment, and run [index](#index) to create the RAG vector store from files in the ```data``` directory:
 ```shell
-pyenv activate urcuchillay-env && cd urcuchillay ; ./gateway.py --host 0.0.0.0
+pyenv activate urcuchillay-env && cd urcuchillay ; ./index.py
 ```
-4. Start Web Chat UI (requires [Docker](https://docs.docker.com/get-docker/)):
+4. Start Gateway and Web Chat UI via [Docker](https://docs.docker.com/get-docker/):
 ```shell
-pyenv activate urcuchillay-env && cd urcuchillay ; ./scripts/docker-chat-web.sh
+./scripts/docker-compose.sh --load
 ```
 5. Open Web Chat UI in a browser:
 - [http://localhost:3000](http://localhost:3000)
@@ -81,11 +94,12 @@ pyenv activate urcuchillay-env && cd urcuchillay ; ./scripts/docker-chat-web.sh
 ### macOS
 
 - [Homebrew](https://brew.sh) is used to install software dependencies.
-- [Docker](https://docs.docker.com/get-docker/) is recommended for the interactive chat web interface
+- [Docker](https://docs.docker.com/get-docker/) is recommended for the interactive chat web interface.
 
 ### Linux
 
 - For NVIDIA GPU acceleration, please [install CUDA drivers](https://developer.nvidia.com/cuda-downloads?target_os=Linux).
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) is necessary for [Docker](https://docs.docker.com/get-docker/) with GPU acceleration.
 
 ## Installation
 
