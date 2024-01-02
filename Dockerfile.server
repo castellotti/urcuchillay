@@ -1,0 +1,35 @@
+# Copyright (c) 2023 Steve Castellotti
+# This file is part of Urcuchillay and is released under the MIT License.
+# See LICENSE file in the project root for full license information.
+
+FROM nvidia/cuda:12.3.1-devel-ubuntu22.04
+
+# Set the working directory in the container
+WORKDIR /server
+
+# Copy the current directory contents into the container at /server
+COPY config.py server.py utils.py ./
+COPY . /server
+
+## Install Python and pip
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Set environment variables
+ENV LD_LIBRARY_PATH=/usr/local/cuda-12.3/compat:${LD_LIBRARY_PATH}
+ENV CUDA_DOCKER_ARCH=all
+ENV LLAMA_CUBLAS=1
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir requests tqdm uvicorn
+
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install 'llama-cpp-python[server]'
+
+# Make API port 8000 available
+EXPOSE 8000
+
+# Mount points
+VOLUME ["/server/models"]
+
+# Command to run the server
+ENTRYPOINT ["python3", "./server.py"]
