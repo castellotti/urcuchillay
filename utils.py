@@ -45,6 +45,7 @@ def parse_arguments_common(parser):
     parser.add_argument('--cpu', action='store_const', const=0,
                         help='Use the CPU only instead of GPU acceleration')
     parser.add_argument('--gpus', '--enable_gpus', '--n_gpu_layers', action='store_const',
+                        const=config.Config.ENABLE_GPUS,
                         default=config.Config.ENABLE_GPUS,
                         help='One or more GPU layers will enable hardware acceleration (default: %(default)s)')
     parser.add_argument('--temperature', type=float, default=config.Config.TEMPERATURE,
@@ -53,6 +54,10 @@ def parse_arguments_common(parser):
                         help='The context window value for the model (default: %(default)s)')
     parser.add_argument('--max_new_tokens', type=float, default=config.Config.MAX_NEW_TOKENS,
                         help='The max new tokens value for the model (default: %(default)s)')
+    parser.add_argument('--max_retries', type=str, default=config.APIConfig.MAX_RETRIES,
+                        help=f'The maximum number of API retries (default: %(default)s)')
+    parser.add_argument('--timeout', type=float, default=config.APIConfig.TIMEOUT,
+                        help='The timeout, in seconds, for API requests (default: %(default)s)')
     parser.add_argument('--save', type=str2bool, nargs='?', const=True, default=True,
                         help='Save indexed vector store locally (default: %(default)s)')
     parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
