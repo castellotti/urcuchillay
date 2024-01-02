@@ -40,18 +40,20 @@ cd urcuchillay
 - [http://localhost:3000](http://localhost:3000)
 
 ### macOS
-- **Note** The LLM [server](#server) and RAG [index](#index) applications must run natively on macOS in order to access the GPU through [Metal](https://developer.apple.com/metal/). It not currently possible to access Metal from inside a Docker container. 
+- **Note**: The LLM [server](#server) and RAG [index](#index) applications must run natively on macOS in order to access the GPU through [Metal](https://developer.apple.com/metal/). It not currently possible to access Metal from inside a Docker container. 
 1. Install Urcuchillay: 
 ```shell
 curl -L setup.urcuchillay.ai | sh
 ```
 2. Open new Terminal, activate environment, and start [server](#server) on the network:
 ```shell
-pyenv activate urcuchillay-env && cd urcuchillay ; ./server.py --host 0.0.0.0
+pyenv activate urcuchillay-env
+./server.py --host 0.0.0.0
 ```
 3. Open new Terminal, activate environment, and run [index](#index) to create the RAG vector store from files in the ```data``` directory:
 ```shell
-pyenv activate urcuchillay-env && cd urcuchillay ; ./index.py
+pyenv activate urcuchillay-env
+./index.py
 ```
 4. Start Gateway and Web Chat UI via [Docker](https://docs.docker.com/get-docker/):
 ```shell
