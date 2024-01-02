@@ -6,16 +6,6 @@
 import json
 import logging
 import os
-import sys
-
-try:
-    import llama_index.chat_engine.types
-    import llama_index.constants
-except ModuleNotFoundError as e:
-    print('\nError importing Python module(s)')
-    print('If installed using setup.sh it may be necessary to run:\n')
-    print('pyenv activate urcuchillay-env\n')
-    sys.exit(1)
 
 
 class Models:
@@ -100,9 +90,9 @@ class Config:
     UI_PORT = 3000
 
     ENABLE_GPUS = 1  # One or more GPU layers will enable hardware acceleration (1 is correct for Apple Silicon)
-    TEMPERATURE = llama_index.constants.DEFAULT_TEMPERATURE  # 0.1
-    CONTEXT_WINDOW = llama_index.constants.DEFAULT_CONTEXT_WINDOW  # 3900 tokens
-    MAX_NEW_TOKENS = llama_index.constants.DEFAULT_NUM_OUTPUTS  # 256 tokens
+    TEMPERATURE = 0.1  # llama_index.constants.DEFAULT_TEMPERATURE
+    CONTEXT_WINDOW = 3900  # llama_index.constants.DEFAULT_CONTEXT_WINDOW
+    MAX_NEW_TOKENS = 256  # llama_index.constants.DEFAULT_NUM_OUTPUTS
 
     DATA_PATH = os.path.join(os.getcwd(), 'data')
     MODEL_PATH = os.path.join(os.getcwd(), 'models')
@@ -122,16 +112,16 @@ class Config:
 
     # First generate a standalone question from conversation context and last message,
     # then query the query engine for a response.
-    # CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_QUESTION
+    # CHAT_MODE = "condense_question"  # llama_index.chat_engine.types.ChatMode.CONDENSE_QUESTION
 
     # First retrieve text from the index using the user's message, then use the context
     # in the system prompt to generate a response.
-    CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONTEXT
+    CHAT_MODE = "context"  # llama_index.chat_engine.types.ChatMode.CONTEXT
 
     # First condense a conversation and latest user message to a standalone question.
     # Then build a context for the standalone question from a retriever,
     # Then pass the context along with prompt and user message to LLM to generate a response.
-    # CHAT_MODE = llama_index.chat_engine.types.ChatMode.CONDENSE_PLUS_CONTEXT
+    # CHAT_MODE = "condense_plus_context"  # llama_index.chat_engine.types.ChatMode.CONDENSE_PLUS_CONTEXT
 
 
 class APIConfig:
@@ -139,6 +129,8 @@ class APIConfig:
     API_PORT = 8000  # llama_cpp.server.app.Settings.port
     OPENAI_API_VERSION = '1'
     OPENAI_API_KEY = 'xxxxxxxx'
+    TIMEOUT = 60.0  # llama_index.llms.openai
+    MAX_RETRIES = 3  # llama_index.llms.openai
 
     @staticmethod
     def get_docker_openai_api_host(port=API_PORT):
