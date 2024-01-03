@@ -19,7 +19,7 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 - Designed to run locally on your own hardware
 - Automatically downloads models and software dependencies
 - A focus on simplicity and using the fewest steps and commands necessary to get started
-- Develop offline supported by your own LLM without paying token service fees 
+- Developers can work offline, using standard APIs to access their own LLM(s) without paying token service fees 
 - Open Source and completely free for personal and professional use
 
 ## Technology
