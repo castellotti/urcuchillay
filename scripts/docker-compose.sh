@@ -165,6 +165,7 @@ if [ "$(uname -s)" = "Linux" ]; then
     USE_LLAMA_CPP_SERVER_CUDA=$([ "$CUDA_STATUS" = "available" ] && [ "$NCT_STATUS" = "available" ] && echo true || echo false)
 fi
 
+# Verify correct directory
 if [ ! -f docker-compose.yml ]; then
   # shellcheck disable=SC2046
   if [ "$(basename $(pwd))" = "scripts" ] && \
@@ -181,5 +182,5 @@ fi
 if [ "$USE_LLAMA_CPP_SERVER_CUDA" = true ]; then
     docker-compose -f docker-compose.cuda.yml up --build
 else
-    docker-compose up --build
+    docker-compose -f docker-compose.yml up --build
 fi
