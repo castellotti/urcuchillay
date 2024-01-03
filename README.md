@@ -2,6 +2,8 @@
 
 "Ur-koo-CHEE-lye"
 
+## Your friendly, local AI
+
 A lightweight [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible service bundling a local [LLM](https://en.wikipedia.org/wiki/Large_language_model) with [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation), a user interface, and hardware acceleration for Apple and NVIDIA GPUs.
 
 <div style="text-align:center;">
@@ -13,10 +15,11 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 ## Features
 
 ![User Interface](docs/images/urcuchillay-chatbot_ui-compact.png)
-- Train AI to understand and explore your own personal data while remaining absolutely private
+- Train your AI to understand and explore your own private data while keeping it private
 - Designed to run locally on your own hardware
 - Automatically downloads models and software dependencies
 - A focus on simplicity and using the fewest steps and commands necessary to get started
+- Develop offline supported by your own LLM without paying token service fees 
 - Open Source and completely free for personal and professional use
 
 ## Technology
