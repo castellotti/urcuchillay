@@ -119,7 +119,7 @@ case "$OS" in
             packages="make build-essential libssl-dev zlib1g-dev libbz2-dev \
                       libreadline-dev libsqlite3-dev wget curl llvm \
                       libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
-                      libffi-dev liblzma-dev docker.io"
+                      libffi-dev liblzma-dev docker.io docker-compose"
 
             # Collect missing prerequisites
             install_required=false
@@ -167,7 +167,7 @@ case "$OS" in
             # List of prerequisite packages
             packages="zlib-devel bzip2 bzip2-devel readline-devel \
                       sqlite sqlite-devel openssl-devel xz xz-devel \
-                      libffi-devel findutils gcc-c++ docker"
+                      libffi-devel findutils gcc-c++ docker docker-compose"
 
             # Collect missing prerequisites
             to_install=""
