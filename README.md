@@ -46,17 +46,17 @@ cd urcuchillay
 - [http://localhost:3000](http://localhost:3000)
 
 ### macOS
-- **Note**: The LLM [server](#server) and RAG [index](#index) applications must run natively on macOS in order to access the GPU through [Metal](https://developer.apple.com/metal/). It not currently possible to access Metal from inside a Docker container. 
+- **Note**: The LLM [server](#server) and RAG [index](#index) applications must run natively on macOS in order to access the GPU through [Metal](https://developer.apple.com/metal/). It is not currently possible to access Metal from inside a Docker container. 
 1. Install Urcuchillay: 
 ```shell
 curl -L setup.urcuchillay.ai | sh
 ```
-2. Open new Terminal, activate environment, and start [server](#server) on the network:
+2. Open a new Terminal, activate the environment, and start [server](#server) on the network:
 ```shell
 pyenv activate urcuchillay-env
 ./server.py --api_host 0.0.0.0
 ```
-3. Open new Terminal, activate environment, and run [index](#index) to create the RAG vector store from files in the ```data``` directory:
+3. Open a new Terminal, activate the environment, and run [index](#index) to create the RAG vector store from files in the ```data``` directory:
 ```shell
 pyenv activate urcuchillay-env
 ./index.py
@@ -119,7 +119,7 @@ This script is suitable for both macOS and Linux (tested with [Ubuntu 22.04 LTS]
 sh setup.sh
 ```
 
-Alternatively, Urcuchillay can be installed directly via curl:
+Alternatively, Urcuchillay can be installed directly via ```curl```:
 - Open the *Terminal* application and paste the following:
 ```shell
 curl -L setup.urcuchillay.ai | sh
@@ -242,7 +242,7 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 ```
-- To save startup time, the ```index.py``` command can be used to create and save the vector store locally, and ```gateway.py``` can access this local cache using the ```--load``` argument:
+- To save startup time, the [index](#index) command can be used to create and save the vector store locally, and ```gateway.py``` can access this local cache using the ```--load``` argument:
 ```shell
 ./gateway.py --load
 ```
