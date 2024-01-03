@@ -7,6 +7,9 @@ version: '3.8'
 services:
   gateway:
     build: .
+    restart: on-failure  # Gateway may time out waiting to connect to server if server is downloading a model
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8080:8080"
     volumes:
