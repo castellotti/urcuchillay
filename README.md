@@ -2,7 +2,7 @@
 
 "Ur-koo-CHEE-lye"
 
-A lightweight [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible service bundling a local [LLM](https://en.wikipedia.org/wiki/Large_language_model) with [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation) and hardware acceleration for Apple and NVIDIA GPUs.
+A lightweight [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible service bundling a local [LLM](https://en.wikipedia.org/wiki/Large_language_model) with [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation), a user interface, and hardware acceleration for Apple and NVIDIA GPUs.
 
 <div style="text-align:center;">
   <img src="docs/images/urcuchillay-header.webp" alt="Urcuchillay" width="480"/>
@@ -13,7 +13,13 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 ## Features
 
 ![User Interface](docs/images/urcuchillay-chatbot_ui-compact.png)
+- Train AI to understand and explore your own personal data while remaining absolutely private
+- Designed to run locally on your own hardware
+- Automatically downloads models and software dependencies
+- A focus on simplicity and using the fewest steps and commands necessary to get started
+- Open Source and completely free for personal and professional use
 
+## Technology
 - [OpenAI API](https://platform.openai.com/docs/api-reference) support
 - Local large language models ([LLMs](https://en.wikipedia.org/wiki/Large_language_model))
 - Retrieval-augmented generation ([RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation))
@@ -48,7 +54,7 @@ curl -L setup.urcuchillay.ai | sh
 2. Open new Terminal, activate environment, and start [server](#server) on the network:
 ```shell
 pyenv activate urcuchillay-env
-./server.py --host 0.0.0.0
+./server.py --api_host 0.0.0.0
 ```
 3. Open new Terminal, activate environment, and run [index](#index) to create the RAG vector store from files in the ```data``` directory:
 ```shell
@@ -65,6 +71,7 @@ pyenv activate urcuchillay-env
 # Table of Contents
 - [Urcuchillay](#urcuchillay)
   - [Features](#features)
+  - [Technology](#technology)
   - [Quickstart Guide](#quickstart-guide)
 - [Table of Contents](#table-of-contents)
   - [Software](#software)
@@ -77,6 +84,7 @@ pyenv activate urcuchillay-env
   - [Data](#data)
   - [Storage](#storage)
   - [Usage](#usage)
+    - [Environment](#environment)
     - [Server](#server)
     - [Index](#index)
     - [Gateway](#gateway)
@@ -85,7 +93,7 @@ pyenv activate urcuchillay-env
   - [Endpoints](#endpoints)
 
 ## Software
-- [gateway.py](gateway.py): The core API service, merging a local LLM with RAG functionality via [LlamaIndex](https://www.llamaindex.ai) while conforming to OpenAI API [chat](https://platform.openai.com/docs/api-reference/chat) and [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints. All other endpoints are proxied through without modification to the local LLM server.
+- [gateway.py](gateway.py): The core service, merging a local LLM with RAG functionality via [LlamaIndex](https://www.llamaindex.ai) while conforming to OpenAI API [chat](https://platform.openai.com/docs/api-reference/chat) and [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints. All other endpoints are proxied through without modification to the local LLM server.
 - [server.py](server.py): An embedded [Llama.cpp](https://github.com/ggerganov/llama.cpp/) service with [Python bindings](https://github.com/abetlen/llama-cpp-python) providing [OpenAI API](https://platform.openai.com/docs/api-reference)-compatible access to your local LLM.
 - [index.py](index.py): A command-line tool to create and manage the vector store for retrieval-augmented generation (RAG).
 - [prompt.py](prompt.py): A command-line tool for simple single queries to test the LLM and RAG storage.
@@ -128,7 +136,7 @@ Models are automatically downloaded and cached locally if not already present.
 A folder called ```models``` will be created in the current directory if it does not already exist.
 
 By default, Urcuchillay supports alias names for the following models (by using the ```--model``` argument):
-- mistral: (7B) [TheBloke/Mistral-7B-v0.1-GGUF](https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF)
+- mistral: (7B) [TheBloke/Mistral-7B-Instruct-v0.1-GGUF](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1)
 - mixtral: (8x7B) [TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF)
 - small: (7B) [TheBloke/Llama-2-7B-Chat-GGUF](https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF)*
 - medium: (13B) [TheBloke/Llama-2-13B-Chat-GGUF](https://huggingface.co/TheBloke/Llama-2-13B-Chat-GGUF)*
@@ -164,13 +172,17 @@ The ```storage``` directory will be created if it does not already exist.
 
 ## Usage
 
-***Note***: Typically after install via ```setup.sh``` it is necessary to activate the pyenv virtual environment for urcuchillay in a new terminal before use:
+- **Note**: For most use cases the [Quickstart Guide](#quickstart-guide) should suffice
+
+### Environment
+- Typically, after install via ```setup.sh``` it is necessary to activate the pyenv virtual environment for Urcuchillay in a new terminal before use:
 ```shell
 pyenv activate urcuchillay-env
 ```
 
 ### Server
-- First the ```server.py``` service should be started:
+- **Note**: On macOS, this service will need to be run directly instead of inside a container (such as Docker) in order to benefit from GPU hardware acceleration. This is because it is not currently possible to access [Metal](https://developer.apple.com/metal) from inside a Docker container.
+- After the environment is activated the ```server.py``` service can be started:
 ```shell
 ./server.py
 ```
@@ -190,6 +202,11 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 - A custom host and port can be specified via ```--api_host``` and ```--api_port``` arguments respectively.
+- For example, to host the server on the network for access from within a Docker container:
+```shell
+./server.py --api_host 0.0.0.0
+```
+
 - For additional options please check usage:
 ```shell
 ./server.py --help
@@ -197,10 +214,15 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 
 ### Index
 - To generate and save a local vector store for RAG support, the ```index.py``` command-line tool is available.
+- **Note**: As with the [server](#server), on macOS it is necessary to run this application directly (and not inside a container) in order to benefit from GPU hardware acceleration.
 - By default files in the ```data``` directory will be processed and the local vector store will be placed in a directory called ```storage```. These locations can be set using the ```--data``` and ```--storage``` arguments respectively.
 - The following command will delete any existing local vector store and create a new one from files found in the ```data``` directory:
 ```shell
 ./index.py --reset
+```
+- For testing purposes it is possible to direct the software at an empty or non-existing directory in order to generate an empty vector store:
+```shell
+./index --data empty
 ```
 - For additional options please check usage:
 ```shell
@@ -208,9 +230,10 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
 ### Gateway
-- The ```gateway.py``` service operates similarly to the ```server.py``` process but will include RAG support via LlamaIndex for any calls to the [chat](https://platform.openai.com/docs/api-reference/chat) or [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints.
+- The ```gateway.py``` service operates similarly to the [server](#server) process but will include RAG support via LlamaIndex for any calls to the [chat](https://platform.openai.com/docs/api-reference/chat) or [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints.
+- Gateway can be run directly or as part of a Docker Swarm via the docker-compose.sh script (see the [Quickstart Guide](#quickstart-guide) for details).
 - The service will scan files in the ```data``` directory at startup and create a vector store for RAG support.
-- By default ```gateway.py``` will listen on **localhost** port **8080** and will communicate with ```server.py``` on port **8000**.
+- By default ```gateway.py``` will listen on **localhost** port **8080** and will communicate with [server](#server) on port **8000**.
 - The host and port for the ```gateway.py``` service can be set using the ```--gateway_host``` and ```--gateway_port``` arguments.
 ```shell
 ./gateway.py
@@ -238,7 +261,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 
 A web-based user interface in the style of ChatGPT is available via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui).
 
-Installation instructions are available through the [Chatbot UI GitHub repository](https://github.com/mckaywrigley/chatbot-ui#chatbot-ui), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the ```server.py``` and ```gateway.py``` services are running:
+Installation instructions are available through the [Chatbot UI GitHub repository](https://github.com/mckaywrigley/chatbot-ui#chatbot-ui), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the [server](#server) and [gateway](#gateway) services are running:
 ```shell
 ./scripts/docker-chat-web.sh
 ```
