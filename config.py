@@ -174,6 +174,8 @@ def load_config():
 
     except FileNotFoundError:
         print('Config file not found, using default settings.')
+    except PermissionError:
+        print('Config file permission denied, using default settings.')
     except json.JSONDecodeError:
         print('Error decoding JSON, using default settings.')
 
