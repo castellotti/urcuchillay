@@ -180,7 +180,7 @@ fi
 
 # Execute appropriate version of Docker Compose
 if [ "$USE_LLAMA_CPP_SERVER_CUDA" = true ]; then
-    docker-compose -f docker-compose.cuda.yml up --build
+    docker-compose -f docker-compose.cuda.yml up
 else
-    docker-compose -f docker-compose.yml up --build
+    docker-compose -f docker-compose.yml up
 fi
