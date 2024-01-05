@@ -7,7 +7,9 @@ FROM python:3.11.6
 WORKDIR /app
 
 # Dependencies
-RUN pip install --no-cache-dir fastapi httpx uvicorn llama_index transformers torch pypdf Pillow
+RUN pip install --no-cache-dir fastapi httpx uvicorn llama_index transformers torch \
+    pypdf Pillow docx2txt nbconvert EbookLib html2text \
+    pydub git+https://github.com/openai/whisper.git
 
 # Package
 COPY gateway.py client.py config.py utils.py ./

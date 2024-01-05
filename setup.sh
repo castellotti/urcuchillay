@@ -322,7 +322,8 @@ else
 fi
 
 pip install 'llama-cpp-python[server]' llama_index transformers torch \
-  pypdf Pillow
+  pypdf Pillow docx2txt nbconvert EbookLib html2text \
+  pydub git+https://github.com/openai/whisper.git
 
 printf "Verifying llama_cpp_python version: "
 python -c "import llama_cpp; print(llama_cpp.__version__)"
