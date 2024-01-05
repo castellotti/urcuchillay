@@ -49,6 +49,10 @@ class Index(client.Client):
             # persist the index to disk
             index.storage_context.persist(persist_dir=args.storage)
 
+        if args.reload:
+            # Request gateway to reload indexed vector store
+            utils.request_gateway_load(args.host, args.port)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command parameters')

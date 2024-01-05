@@ -61,6 +61,8 @@ def parse_arguments_common(parser):
                         help='Save indexed vector store locally (default: %(default)s)')
     parser.add_argument('--load', type=str2bool, nargs='?', const=True, default=False,
                         help='Load indexed vector store (default: %(default)s)')
+    parser.add_argument('--reload', type=str2bool, nargs='?', const=True, default=False,
+                        help='Request gateway to reload indexed vector store (default: %(default)s)')
     parser.add_argument('--reset', '--clear', type=str2bool, nargs='?', const=True, default=False,
                         help='Reset indexed vector store (default: %(default)s)')
     parser.add_argument('--data', '--data_path', type=str, default=config.Config.DATA_PATH,
@@ -248,3 +250,13 @@ def get_valid_filename(url, default_extension='.download'):
     cleaned_filename = cleaned_filename[:255]  # Trim to a reasonable filename length
 
     return cleaned_filename
+
+
+def request_gateway_load(host, port):
+    url = f'http://{host}:{port}/v0/gateway/load'
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        print("Index loaded successfully")
+    else:
+        print("Error loading index:", response.text)
