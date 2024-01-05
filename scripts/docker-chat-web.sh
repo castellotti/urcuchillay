@@ -3,15 +3,6 @@
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
-# Check if the script is running in the 'urcuchillay-env' virtual environment
-if [ "$(pyenv version-name)" != "urcuchillay-env" ]; then
-    echo "This script must be run in the 'urcuchillay-env' virtual environment."
-    echo "If installed using setup.sh it may be necessary to run:"
-    echo
-    echo "pyenv activate urcuchillay-env"
-    exit 1
-fi
-
 # Function to parse JSON using Python
 parse_json() {
     echo "$1" | python -c "import sys, json; print(json.load(sys.stdin)$2)"
