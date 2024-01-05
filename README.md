@@ -64,7 +64,7 @@ pyenv activate urcuchillay-env
 pyenv activate urcuchillay-env
 ./index.py
 ```
-4. Start Gateway and Web Chat UI via [Docker](https://docs.docker.com/get-docker/):
+4. Start Gateway and Web Chat UI via [Docker](https://docs.docker.com/get-docker/), and load the RAG vector store:
 ```shell
 ./scripts/docker-compose.sh --load
 ```
@@ -218,10 +218,14 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ### Index
 - To generate and save a local vector store for RAG support, the ```index.py``` command-line tool is available.
 - **Note**: As with the [server](#server), on macOS it is necessary to run this application directly (and not inside a container) in order to benefit from GPU hardware acceleration.
-- By default files in the ```data``` directory will be processed and the local vector store will be placed in a directory called ```storage```. These locations can be set using the ```--data``` and ```--storage``` arguments respectively.
+- By default, files in the ```data``` directory will be processed and the local vector store will be placed in a directory called ```storage```. These locations can be set using the ```--data``` and ```--storage``` arguments respectively.
 - The following command will delete any existing local vector store and create a new one from files found in the ```data``` directory:
 ```shell
 ./index.py --reset
+```
+- These commands will ```--reset``` the vector store, then connect to the [gateway](#gateway) service and request it load the new vector store:
+```shell
+./index.py --reset --reload
 ```
 - For testing purposes it is possible to direct the software at an empty or non-existing directory in order to generate an empty vector store:
 ```shell
@@ -236,7 +240,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 - The ```gateway.py``` service operates similarly to the [server](#server) process but will include RAG support via LlamaIndex for any calls to the [chat](https://platform.openai.com/docs/api-reference/chat) or [text-completion](https://platform.openai.com/docs/api-reference/completions) endpoints.
 - Gateway can be run directly or as part of a Docker Swarm via the docker-compose.sh script (see the [Quickstart Guide](#quickstart-guide) for details).
 - The service will scan files in the ```data``` directory at startup and create a vector store for RAG support.
-- By default ```gateway.py``` will listen on **localhost** port **8080** and will communicate with [server](#server) on port **8000**.
+- By default, ```gateway.py``` will listen on **localhost** port **8080** and will communicate with [server](#server) on port **8000**.
 - The host and port for the ```gateway.py``` service can be set using the ```--gateway_host``` and ```--gateway_port``` arguments.
 ```shell
 ./gateway.py
