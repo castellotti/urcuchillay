@@ -211,6 +211,17 @@ case "$OS" in
                 output_message="${output_message}  newgrp docker\n"
             fi
 
+            # Check if SELinux is enabled
+            selinux_status=$(getenforce)
+            if [ "$selinux_status" = "Enforcing" ] || [ "$selinux_status" = "Permissive" ]; then
+              if [ -n "$output_message" ]; then
+                  output_message="${output_message}\n"
+              fi
+              output_message="${output_message}  SELinux detected as enabled\n"
+              output_message="${output_message}  It may be necessary to disable SELinux before using docker:\n"
+              output_message="${output_message}  sudo setenforce 0\n"
+            fi
+
         else
             echo "Warning: Unknown distribution detected. Dependencies may be missing."
         fi
@@ -321,6 +332,7 @@ else
     pyenv activate urcuchillay-env
 fi
 
+pip install --upgrade pip
 pip install 'llama-cpp-python[server]' llama_index transformers torch \
   pypdf Pillow docx2txt nbconvert EbookLib html2text \
   pydub git+https://github.com/openai/whisper.git
