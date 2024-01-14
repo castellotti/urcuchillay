@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
@@ -333,7 +333,7 @@ else
 fi
 
 pip install --upgrade pip
-pip install 'llama-cpp-python[server]' llama_index transformers torch \
+pip install 'llama-cpp-python[server]' llama_index transformers torch chromadb \
   pypdf Pillow docx2txt nbconvert EbookLib html2text \
   pydub git+https://github.com/openai/whisper.git
 

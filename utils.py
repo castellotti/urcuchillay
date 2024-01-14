@@ -1,5 +1,5 @@
 # utils.py
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
@@ -174,10 +174,10 @@ def get_model(args):
     """Determine path to model file and if necessary download from URL."""
     if os.path.exists(args.model):
         pass
-    if os.path.exists(os.path.join(os.getcwd(), args.model)):
-        args.model = os.path.join(os.getcwd(), args.model)
     elif os.path.exists(os.path.join(args.path, args.model)):
         args.model = os.path.join(args.path, args.model)
+    elif os.path.exists(os.path.join(os.getcwd(), args.model)):
+        args.model = os.path.join(os.getcwd(), args.model)
     elif os.path.exists(os.path.join(os.getcwd(), args.path, args.model)):
         args.model = os.path.join(os.getcwd(), args.path, args.model)
     else:
@@ -260,3 +260,28 @@ def request_gateway_load(host, port):
         print("Index loaded successfully")
     else:
         print("Error loading index:", response.text)
+
+
+def request_gateway_reset(host, port):
+    url = f'http://{host}:{port}/v0/gateway/reset'
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        print("Index reset successfully")
+    else:
+        print("Error resetting index:", response.text)
+
+
+def storage_verify(storage_path=config.Config.STORAGE_PATH):
+    verified = True
+    for file in config.Config.STORAGE_FILES:
+        if not os.path.exists(os.path.join(storage_path, file)):
+            verified = False
+    return verified
+
+
+def storage_reset(storage_path=config.Config.STORAGE_PATH):
+    for file in config.Config.STORAGE_FILES:
+        filepath = os.path.join(storage_path, file)
+        if os.path.exists(filepath):
+            os.remove(filepath)

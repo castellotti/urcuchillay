@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
@@ -13,9 +13,9 @@ import config
 import schemas.openai
 
 try:
-    import utils
     import fastapi
     import httpx
+    import utils
     import uvicorn
 except ModuleNotFoundError as e:
     print('\nError importing Python module(s)')
@@ -39,6 +39,11 @@ class Gateway(client.Client):
         logging.getLogger().name = __name__
 
         self.llm = self.get_llm(args)
+
+        if config.Config.STORAGE_TYPE == 'chromadb':
+            args.embed_model_provider = 'BAAI'
+            args.embed_model_name = 'bge-base-en-v1.5'
+
         self.service_context = self.get_service_context(self.llm, args)
         self.index = self.get_index(self.service_context, args)
         self.engine = None
@@ -54,8 +59,17 @@ app = fastapi.FastAPI()
 @app.get('/v0/gateway/load')
 async def load_index():
     """When the vector store is updated this service needs to reload it into memory"""
-    gateway.index = gateway.get_index(gateway.service_context, gateway.args)
+    args = gateway.args
+    args.load = True
+    gateway.get_index(gateway.service_context, args)
     return {'message': 'Index loaded successfully'}
+
+
+@app.get('/v0/gateway/reset')
+async def reset_index():
+    """Resets the database. This will delete all collections and entries."""
+    gateway.reset_index(gateway.args)
+    return {'message': 'Index reset successfully'}
 
 
 @app.api_route('/v1/completions', methods=['POST'])

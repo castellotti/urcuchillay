@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
@@ -7,7 +7,8 @@ FROM python:3.11.6
 WORKDIR /app
 
 # Dependencies
-RUN pip install --no-cache-dir fastapi httpx uvicorn llama_index transformers torch \
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir fastapi httpx uvicorn llama_index transformers torch chromadb \
     pypdf Pillow docx2txt nbconvert EbookLib html2text \
     pydub git+https://github.com/openai/whisper.git
 

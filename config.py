@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
 import json
 import logging
-import os
 
 
 class Models:
@@ -94,13 +93,26 @@ class Config:
     CONTEXT_WINDOW = 3900  # llama_index.constants.DEFAULT_CONTEXT_WINDOW
     MAX_NEW_TOKENS = 256  # llama_index.constants.DEFAULT_NUM_OUTPUTS
 
-    DATA_PATH = os.path.join(os.getcwd(), 'data')
-    MODEL_PATH = os.path.join(os.getcwd(), 'models')
-    STORAGE_PATH = os.path.join(os.getcwd(), 'storage')
+    DATA_PATH = 'data'
+    MODEL_PATH = 'models'
 
     MODEL_DEFAULT = Models.MODEL_ALIASES['mistral-7b-instruct']
     MODEL_URL_DEFAULT = Models.MODELS[MODEL_DEFAULT]['url']
     EMBED_MODEL_NAME = 'default'
+
+    TOKENIZERS_PARALLELISM = False
+
+    ANONYMIZED_TELEMETRY = False
+    ALLOW_RESET = True
+
+    STORAGE_TYPES = ['json', 'chromadb']
+
+    STORAGE_TYPE = 'chromadb'
+
+    if STORAGE_TYPE == 'json':
+        STORAGE_PATH = 'storage'
+    elif STORAGE_TYPE == 'chromadb':
+        STORAGE_PATH = 'chroma_db'
 
     STORAGE_FILES = ['default__vector_store.json',
                      'docstore.json',
@@ -143,21 +155,6 @@ class APIConfig:
     @staticmethod
     def get_openai_api_base(host=API_HOST, port=API_PORT, version=OPENAI_API_VERSION):
         return f'http://{host}:{port}/v{version}'
-
-
-def storage_verify(storage_path=Config.STORAGE_PATH):
-    verified = True
-    for file in Config.STORAGE_FILES:
-        if not os.path.exists(os.path.join(storage_path, file)):
-            verified = False
-    return verified
-
-
-def storage_reset(storage_path=Config.STORAGE_PATH):
-    for file in Config.STORAGE_FILES:
-        filepath = os.path.join(storage_path, file)
-        if os.path.exists(filepath):
-            os.remove(filepath)
 
 
 def load_config():
