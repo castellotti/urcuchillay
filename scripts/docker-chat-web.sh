@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2023 Steve Castellotti
+# Copyright (c) 2023-2024 Steve Castellotti
 # This file is part of Urcuchillay and is released under the MIT License.
 # See LICENSE file in the project root for full license information.
 
@@ -42,4 +42,4 @@ docker run \
     -e OPENAI_API_KEY="$OPENAI_API_KEY" \
   	-v ./config.json:/usr/src/app/config.json \
     -p "$UI_PORT":"$UI_PORT" \
-    ghcr.io/mckaywrigley/chatbot-ui:main
+    ghcr.io/castellotti/urcuchillay-chat:main
