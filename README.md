@@ -26,6 +26,7 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 - [OpenAI API](https://platform.openai.com/docs/api-reference) support
 - Local large language models ([LLMs](https://en.wikipedia.org/wiki/Large_language_model))
 - Retrieval-augmented generation ([RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation))
+- [Chroma](https://docs.trychroma.com/) embedding database for vector store
 - Web-based chat interface in the style of ChatGPT via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui)
 - GPU acceleration
   - Apple Metal
@@ -144,6 +145,7 @@ By default, Urcuchillay supports alias names for the following models (by using 
 - small: (7B) [TheBloke/Llama-2-7B-Chat-GGUF](https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF)*
 - medium: (13B) [TheBloke/Llama-2-13B-Chat-GGUF](https://huggingface.co/TheBloke/Llama-2-13B-Chat-GGUF)*
 - large: (70B) [TheBloke/Llama-2-70B-Chat-GGUF](https://huggingface.co/TheBloke/Llama-2-70B-Chat-GGUF)*
+- phi-2: (2.7B) [TheBloke/phi-2-GGUF](https://huggingface.co/TheBloke/phi-2-GGUF)
 
 Alternative models can be specified using the ```--model_url``` argument.
 
