@@ -49,6 +49,13 @@ class Models:
             'model_creator': 'Mistral AI',
             'model_provider': 'TheBloke',  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
         },
+        'phi-2.Q4_K_M.gguf': {
+            'model': 'https://huggingface.co/TheBloke/phi-2-GGUF',
+            'url': 'https://huggingface.co/TheBloke/phi-2-GGUF/resolve/main/phi-2.Q4_K_M.gguf',
+            'prompt_template': 'Instruct: {prompt}\nOutput:',
+            'model_creator': 'Microsoft',
+            'model_provider': 'TheBloke',  # (Q4_K_M: 4-bit, medium, balanced quality - recommended)
+        },
     }
 
     MODEL_ALIASES = {
@@ -71,6 +78,7 @@ class Models:
         'mixtral-instruct': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
         'mixtral-8x7b': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
         'mixtral-8x7b-instruct': 'mixtral-8x7b-instruct-v0.1.Q4_K_M.gguf',
+        'phi-2': 'phi-2.Q4_K_M.gguf',
     }
 
 
