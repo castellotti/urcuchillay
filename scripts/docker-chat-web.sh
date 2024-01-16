@@ -41,5 +41,5 @@ docker run \
     -e OPENAI_API_HOST="http://host.docker.internal:$GATEWAY_PORT" \
     -e OPENAI_API_KEY="$OPENAI_API_KEY" \
   	-v ./config.json:/usr/src/app/config.json \
-    -p "$UI_PORT":"$UI_PORT" \
+    -p "$UI_PORT":3000 \
     ghcr.io/castellotti/urcuchillay-chat:main
