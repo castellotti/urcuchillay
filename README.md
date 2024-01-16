@@ -27,7 +27,7 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 - Local large language models ([LLMs](https://en.wikipedia.org/wiki/Large_language_model))
 - Retrieval-augmented generation ([RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation))
 - [Chroma](https://docs.trychroma.com/) embedding database for vector store
-- Web-based chat interface in the style of ChatGPT via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui)
+- [Web-based chat interface](https://github.com/castellotti/urcuchillay-chat) in the style of ChatGPT (forked from [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui))
 - GPU acceleration
   - Apple Metal
   - NVIDIA CUDA
@@ -268,9 +268,9 @@ INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
 
 ![User Interface](docs/images/urcuchillay-chatbot_ui.png)
 
-A web-based user interface in the style of ChatGPT is available via [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui).
+A web-based user interface in the style of ChatGPT is available via [Urcuchillay Chat](https://github.com/castellotti/urcuchillay-chat).
 
-Installation instructions are available through the [Chatbot UI GitHub repository](https://github.com/mckaywrigley/chatbot-ui#chatbot-ui), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the [server](#server) and [gateway](#gateway) services are running:
+Installation instructions are available through the [Urcuchillay Chat GitHub repository](https://github.com/castellotti/urcuchillay-chat), or if [Docker](https://docs.docker.com/get-docker/) is available the interface can be started immediately on http://localhost:3000 once the [server](#server) and [gateway](#gateway) services are running:
 ```shell
 ./scripts/docker-chat-web.sh
 ```
