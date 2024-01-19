@@ -43,7 +43,8 @@ class Index(client.Client):
         if args.reset:
             self.reset_index(args)
             logging.warning('vector store was reset')
-            args.load = False  # Do not attempt to load from the deleted storage, generate a new vector store
+            if config.Config.STORAGE_TYPE == 'json':
+                args.load = False  # Do not attempt to load from the deleted storage, generate a new vector store
         else:
             index = self.get_index(service_context, args)
 
