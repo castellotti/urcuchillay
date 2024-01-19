@@ -146,6 +146,7 @@ class Client:
         vector_store = llama_index.vector_stores.ChromaVectorStore(chroma_collection=chroma_collection)
 
         if args.load:
+            # noinspection PyTypeChecker
             index = llama_index.VectorStoreIndex.from_vector_store(
                 vector_store,
                 service_context=service_context,
