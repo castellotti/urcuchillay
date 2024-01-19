@@ -213,24 +213,61 @@ async def create_chat_completions(request_data: schemas.openai.ChatCompletionsRe
         return schemas.openai.CustomStreamingResponse(generate_responses())
 
 
-@app.api_route('/{path:path}', methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'])
-async def forward(request: fastapi.Request, path: str):
-    # Forward the request to the OpenAI API server
-    url = f'http://{arguments.api_host}:{arguments.api_port}/{path}'
-
-    # Initialize body to None
+async def get_request_body(request: fastapi.Request):
     body = None
-
-    # Check if the request is likely to have a body
     if request.method in ['POST', 'PUT', 'PATCH'] and request.headers.get('Content-Type') == 'application/json':
         try:
-            body = await request.json()  # Attempt to parse JSON body
+            body = await request.json()
         except json.JSONDecodeError:
-            pass  # If JSON parsing fails, keep body as None
+            pass
 
-    # Use the raw body for other content types or if JSON parsing fails
     if body is None:
         body = await request.body()
+
+    return body
+
+
+@app.api_route('/v1/models', methods=['GET'])
+async def models_endpoint(request: fastapi.Request):
+    # Forward the request to the API server
+    url = f'http://{arguments.api_host}:{arguments.api_port}/v1/models'
+
+    body = await get_request_body(request)
+
+    async with httpx.AsyncClient() as async_client:
+        # Forward the original request method, headers, and body
+        response = await async_client.request(
+            method=request.method,
+            url=url,
+            headers=request.headers,
+            data=body if isinstance(body, dict) else None,
+            content=body if not isinstance(body, dict) else None
+        )
+
+        # Process the response to modify the model id
+        response_data = response.json()  # Parse JSON response
+        if 'data' in response_data:
+            for item in response_data['data']:
+                # If the complete local path (or URL) to a model was provided
+                # then only supply the filename instead
+                last_slash = max(item['id'].rfind('/'), item['id'].rfind('\\'))
+                if last_slash != -1:
+                    item['id'] = item['id'][last_slash+1:]
+
+        content = json.dumps(response_data)
+        headers = dict(response.headers)
+        headers['content-length'] = str(len(content.encode('utf-8')))
+
+        # Return the response from the llama app
+        return fastapi.Response(content=content, status_code=response.status_code, headers=headers)
+
+
+@app.api_route('/{path:path}', methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'])
+async def forward(request: fastapi.Request, path: str):
+    # Forward the request to the API server
+    url = f'http://{arguments.api_host}:{arguments.api_port}/{path}'
+
+    body = await get_request_body(request)
 
     async with httpx.AsyncClient() as async_client:
         # Forward the original request method, headers, and body
