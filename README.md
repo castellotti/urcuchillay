@@ -27,7 +27,7 @@ In the Incan religion, Urcuchillay was depicted as a multicolored male llama, wo
 - Local large language models ([LLMs](https://en.wikipedia.org/wiki/Large_language_model))
 - Retrieval-augmented generation ([RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation#Retrieval-augmented_generation))
 - [Chroma](https://docs.trychroma.com/) embedding database for vector store
-- [Web-based chat interface](https://github.com/castellotti/urcuchillay-chat) in the style of ChatGPT (forked from [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui))
+- [Web-based chat interface](https://github.com/castellotti/urcuchillay-chat) in the style of ChatGPT (based on [Chatbot UI](https://github.com/mckaywrigley/chatbot-ui))
 - GPU acceleration
   - Apple Metal
   - NVIDIA CUDA
